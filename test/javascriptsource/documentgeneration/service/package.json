@@ -1,0 +1,17 @@
+{
+  "name": "mx-docgen-local",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Puppeteer-based script to support local document generation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mendix Technology B.V.",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "command-line-args": "^5.2.1",
+    "puppeteer-core": "^14.2.0",
+    "axios": "^0.27.2"
+  }
+}

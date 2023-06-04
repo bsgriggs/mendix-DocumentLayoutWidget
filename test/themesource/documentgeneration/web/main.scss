@@ -1,0 +1,39 @@
+@import '../../../theme/web/custom-variables';
+
+$default-margin: 10mm;
+
+@media print {
+    .document {
+        .document-section {
+            padding: $default-margin !important; // Important is necessary because of Atlas listview styling
+
+            &.remove-margin {
+                padding: 0 !important;
+            }
+
+            &.remove-margin-top {
+                padding-top: 0 !important;
+            }
+
+            &.remove-margin-bottom {
+                padding-bottom: 0 !important;
+            }
+
+            &.remove-margin-left {
+                padding-left: 0 !important;
+            }
+
+            &.remove-margin-right {
+                padding-right: 0 !important;
+            }
+        }
+
+        .text-white {
+            color: #FFF !important;
+        }
+    }
+
+    .datagrid-striped.mx-datagrid table tbody tr:nth-child(odd) td {
+        background-color: #f5f5f5 !important;
+    }
+}
