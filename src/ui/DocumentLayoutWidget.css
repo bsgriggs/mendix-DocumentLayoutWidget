@@ -1,24 +1,12 @@
-.widget-documentlayoutwidget-clickable {
-    cursor: pointer;
-}
+.document-layout-widget {
 
-.widget-documentlayoutwidget {
-    display: inline-block;
-}
+    .header {
+        position: fixed;
+        top: 0;
+    }
 
-.widget-documentlayoutwidget.badge:empty {
-    display: initial;
-    /* Fix padding to stay round */
-    padding: 3px 10px;
-}
-
-.widget-documentlayoutwidget.label:empty {
-    display: initial;
-    /* Fix padding to stay square */
-    padding: .2em .8em .3em;
-}
-
-.widget-documentlayoutwidget.badge {
-    min-width: 18px;
-    min-height: 18px;
+    .footer {
+        position: fixed;
+        bottom: 0;
+    }
 }

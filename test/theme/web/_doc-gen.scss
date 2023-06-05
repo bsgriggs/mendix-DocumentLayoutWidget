@@ -1,0 +1,7 @@
+
+@media print {
+    // Make sure a page break does not happen inside this element
+    .keep-together {
+        break-inside: avoid;
+    }
+}

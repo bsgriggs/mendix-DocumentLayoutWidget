@@ -23312,4 +23312,10 @@ input[type=checkbox].three-state-checkbox + .control-label {
   border-width: 0;
 }
 
+@media print {
+  .keep-together {
+    break-inside: avoid;
+  }
+}
+
 /*# sourceMappingURL=theme.compiled.css.map */
