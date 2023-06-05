@@ -26,7 +26,7 @@ export function DocumentLayoutWidget(props) {
 
     return (
         <div className={className}>
-            <table>
+            <table className="layout-table">
                 <thead>
                     <tr>
                         <td>
