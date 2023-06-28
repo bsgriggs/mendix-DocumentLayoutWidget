@@ -2,7 +2,7 @@ import "./ui/DocumentLayoutWidget.css";
 import { createElement } from "react";
 
 export function DocumentLayoutWidget(props) {
-    const { headerContent, bodyContent, footerContent, headerHeight, footerHeight } = props;
+    const { headerFooter, headerContent, bodyContent, footerContent, headerHeight, footerHeight } = props;
 
     const className = "document-layout-widget " + props.class;
 
@@ -27,15 +27,17 @@ export function DocumentLayoutWidget(props) {
     return (
         <div className={className}>
             <table className="layout-table">
-                <thead>
-                    <tr>
-                        <td>
-                            <div className="header-space" style={headerStyle}>
-                                &nbsp;
-                            </div>
-                        </td>
-                    </tr>
-                </thead>
+                {(headerFooter === "header" || headerFooter === "both") && (
+                    <thead>
+                        <tr>
+                            <td>
+                                <div className="header-space" style={headerStyle}>
+                                    &nbsp;
+                                </div>
+                            </td>
+                        </tr>
+                    </thead>
+                )}
                 <tbody>
                     <tr>
                         <td>
@@ -43,22 +45,28 @@ export function DocumentLayoutWidget(props) {
                         </td>
                     </tr>
                 </tbody>
-                <tfoot>
-                    <tr>
-                        <td>
-                            <div className="footer-space" style={footerStyle}>
-                                &nbsp;
-                            </div>
-                        </td>
-                    </tr>
-                </tfoot>
+                {(headerFooter === "footer" || headerFooter === "both") && (
+                    <tfoot>
+                        <tr>
+                            <td>
+                                <div className="footer-space" style={footerStyle}>
+                                    &nbsp;
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                )}
             </table>
-            <div className="header" style={headerStyle}>
-                {headerContent}
-            </div>
-            <div className="footer" style={footerStyle}>
-                {footerContent}
-            </div>
+            {(headerFooter === "header" || headerFooter === "both") && (
+                <div className="header" style={headerStyle}>
+                    {headerContent}
+                </div>
+            )}
+            {(headerFooter === "footer" || headerFooter === "both") && (
+                <div className="footer" style={footerStyle}>
+                    {footerContent}
+                </div>
+            )}
         </div>
     );
 }

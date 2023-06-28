@@ -1,3 +1,5 @@
+import { hidePropertyIn } from "@mendix/pluggable-widgets-tools";
+
 /**
  * @typedef Property
  * @type {object}
@@ -48,33 +50,61 @@
  */
 export function getProperties(values, defaultProperties, target) {
     // Do the values manipulation here to control the visibility of properties in Studio and Studio Pro conditionally.
-    /* Example
-    if (values.myProperty === "custom") {
-        delete defaultProperties.properties.myOtherProperty;
+    if (values.headerFooter === "header") {
+        hidePropertyIn(defaultProperties, values, "footerContent");
+        hidePropertyIn(defaultProperties, values, "footerHeight");
     }
-    */
+    if (values.headerFooter === "footer") {
+        hidePropertyIn(defaultProperties, values, "headerContent");
+        hidePropertyIn(defaultProperties, values, "headerHeight");
+    }
     return defaultProperties;
 }
 
-// /**
-//  * @param {Object} values
-//  * @returns {Problem[]} returns a list of problems.
-//  */
-// export function check(values) {
-//    /** @type {Problem[]} */
-//    const errors = [];
-//    // Add errors to the above array to throw errors in Studio and Studio Pro.
-//    /* Example
-//    if (values.myProperty !== "custom") {
-//        errors.push({
-//            property: `myProperty`,
-//            message: `The value of 'myProperty' is different of 'custom'.`,
-//            url: "https://github.com/myrepo/mywidget"
-//        });
-//    }
-//    */
-//    return errors;
-// }
+/**
+ * @param {Object} values
+ * @returns {Problem[]} returns a list of problems.
+ */
+export function check(values) {
+    /** @type {Problem[]} */
+    const errors = [];
+
+    const headerHeightValue = values.headerHeight ? Number(values.headerHeight) : 0;
+    if (values.headerFooter === "both" || values.headerFooter === "header") {
+        if (!values.headerHeight || headerHeightValue <= 0) {
+            errors.push({
+                property: "headerHeight",
+                message: "Header height must be set and positive"
+            });
+        }
+
+        if (!values.headerContent || values.headerContent.widgetCount === 0) {
+            errors.push({
+                property: "headerContent",
+                message: "Place content in the header dropzone"
+            });
+        }
+    }
+
+    const footerHeightValue = values.footerHeight ? Number(values.footerHeight) : 0;
+    if (values.headerFooter === "both" || values.headerFooter === "footer") {
+        if (!values.footerHeight || footerHeightValue <= 0) {
+            errors.push({
+                property: "footerHeight",
+                message: "Footer height must be set and positive"
+            });
+        }
+
+        if (!values.footerContent || values.footerContent.widgetCount === 0) {
+            errors.push({
+                property: "footerContent",
+                message: "Place content in the footer dropzone"
+            });
+        }
+    }
+
+    return errors;
+}
 
 // /**
 //  * @param {object} values

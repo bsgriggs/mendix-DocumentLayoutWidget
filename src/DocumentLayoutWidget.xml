@@ -8,7 +8,16 @@
     <studioProCategory>Document generation</studioProCategory>
     <properties>
         <propertyGroup caption="General">
-            <property key="headerContent" type="widgets">
+            <property key="headerFooter" type="enumeration" defaultValue="both">
+                <caption>Header/Footer</caption>
+                <description></description>
+                <enumerationValues>
+                    <enumerationValue key="both">Both</enumerationValue>
+                    <enumerationValue key="header">Header</enumerationValue>
+                    <enumerationValue key="footer">Footer</enumerationValue>
+                </enumerationValues>
+            </property>
+            <property key="headerContent" type="widgets" required="false">
                 <caption>Header content</caption>
                 <description></description>
             </property>
@@ -16,7 +25,7 @@
                 <caption>Body content</caption>
                 <description></description>
             </property>
-            <property key="footerContent" type="widgets">
+            <property key="footerContent" type="widgets" required="false">
                 <caption>Footer content</caption>
                 <description></description>
             </property>

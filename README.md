@@ -23,5 +23,6 @@ Any content with fixed position will be repeated on every page in the generated 
 ## Usage
 - Place the widget on the page
 - Put your content in the header, body and footer drop zones
+- If you only need a header **or** a footer, leave the unused drop zone empty and set the property to only use what you need
 - When the PDF is generated the header and footer are repeated on each page
 

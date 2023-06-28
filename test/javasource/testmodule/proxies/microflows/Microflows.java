@@ -37,10 +37,10 @@ public class Microflows
 		Map<java.lang.String, Object> params = new HashMap<>();
 		return (java.lang.Boolean) Core.microflowCall("TestModule.ASu_System").withParams(params).execute(context);
 	}
-	public static void dOC_GenerateDocument(IContext context, testmodule.proxies.TestContext _testContext)
+	public static void dOC_OpenDocumentGenerationPage(IContext context, testmodule.proxies.TestContext _testContext)
 	{
 		Map<java.lang.String, Object> params = new HashMap<>();
 		params.put("TestContext", _testContext == null ? null : _testContext.getMendixObject());
-		Core.microflowCall("TestModule.DOC_GenerateDocument").withParams(params).execute(context);
+		Core.microflowCall("TestModule.DOC_OpenDocumentGenerationPage").withParams(params).execute(context);
 	}
 }

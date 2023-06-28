@@ -20,7 +20,8 @@ public class TestContext
 	 */
 	public enum MemberNames
 	{
-		Name("Name");
+		Name("Name"),
+		HeaderFooter("HeaderFooter");
 
 		private final java.lang.String metaName;
 
@@ -157,6 +158,51 @@ public class TestContext
 	public final void setName(com.mendix.systemwideinterfaces.core.IContext context, java.lang.String name)
 	{
 		getMendixObject().setValue(context, MemberNames.Name.toString(), name);
+	}
+
+	/**
+	 * Set value of HeaderFooter
+	 * @param headerfooter
+	 */
+	public final testmodule.proxies.HeaderFooter getHeaderFooter()
+	{
+		return getHeaderFooter(getContext());
+	}
+
+	/**
+	 * @param context
+	 * @return value of HeaderFooter
+	 */
+	public final testmodule.proxies.HeaderFooter getHeaderFooter(com.mendix.systemwideinterfaces.core.IContext context)
+	{
+		Object obj = getMendixObject().getValue(context, MemberNames.HeaderFooter.toString());
+		if (obj == null) {
+			return null;
+		}
+		return testmodule.proxies.HeaderFooter.valueOf((java.lang.String) obj);
+	}
+
+	/**
+	 * Set value of HeaderFooter
+	 * @param headerfooter
+	 */
+	public final void setHeaderFooter(testmodule.proxies.HeaderFooter headerfooter)
+	{
+		setHeaderFooter(getContext(), headerfooter);
+	}
+
+	/**
+	 * Set value of HeaderFooter
+	 * @param context
+	 * @param headerfooter
+	 */
+	public final void setHeaderFooter(com.mendix.systemwideinterfaces.core.IContext context, testmodule.proxies.HeaderFooter headerfooter)
+	{
+		if (headerfooter != null) {
+			getMendixObject().setValue(context, MemberNames.HeaderFooter.toString(), headerfooter.toString());
+		} else {
+			getMendixObject().setValue(context, MemberNames.HeaderFooter.toString(), null);
+		}
 	}
 
 	/**
