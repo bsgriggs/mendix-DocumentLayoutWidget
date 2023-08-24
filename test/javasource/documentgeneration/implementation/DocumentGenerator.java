@@ -10,6 +10,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -62,20 +63,21 @@ public class DocumentGenerator {
 		DocumentRequest documentRequest = DocumentRequestManager.createDocumentRequest(pageMicroflow, contextObject,
 				resultEntity, fileName, generateAsUser, securityToken);
 		String requestId = documentRequest.getRequestId();
+		
+		ISession session = SessionManager.getSession(generateAsUser);
+		String timezoneId = this.getTimezoneIdFromSession(session);
 
 		if (isLocalDevelopmentEnvironment()) {
 			logging.debug("Executing local service");
-			this.executeLocalService(requestId, securityToken);
+			this.executeLocalService(requestId, securityToken, timezoneId);
 		} else {
 			logging.debug("Using Cloud service");
-			this.executeCloudService(requestId, securityToken, getTimeoutValue());
+			this.executeCloudService(requestId, securityToken, timezoneId, getTimeoutValue());
 		}
 
 		if (!this.waitForResult) {
-			ISession session = SessionManager.getSession(generateAsUser);
-			IContext userContext = session.createContext();
-
-			FileDocument document = DocumentGenerator.generateFileDocument(userContext, resultEntity, fileName);
+			IContext sudoContext = session.createContext().createSudoClone();
+			FileDocument document = DocumentGenerator.generateFileDocument(sudoContext, resultEntity, fileName);
 			document.commit();
 
 			// Link and return empty document without waiting for result
@@ -87,7 +89,7 @@ public class DocumentGenerator {
 				documentRequest.getMendixObject().getId());
 	}
 
-	private void executeLocalService(String requestId, String securityToken) {
+	private void executeLocalService(String requestId, String securityToken, String timezoneId) {
 		if (LocalServiceLocator.getNodePath() == null)
 			throw new RuntimeException("Could not find Node.js executable for local document generation");
 
@@ -106,6 +108,10 @@ public class DocumentGenerator {
 		command.add("--result-path=" + ConfigurationManager.RESULT_PATH);
 		command.add("--request-id=" + requestId);
 		command.add("--security-token=" + securityToken);
+		command.add("--timezone=" + timezoneId);
+		
+		if (USE_SCREEN_MEDIATYPE)
+			command.add("--use-screen-media");
 
 		// Execute browser process
 		ProcessBuilder processBuilder = new ProcessBuilder().command(command).redirectErrorStream(true)
@@ -132,7 +138,7 @@ public class DocumentGenerator {
 					"Local service exited with error. Please reference the troubleshooting section in the documentation for details.");
 	}
 
-	private void executeCloudService(String requestId, String securityToken, long timeout) {
+	private void executeCloudService(String requestId, String securityToken, String timezoneId, long timeout) {
 		URI endpoint;
 
 		try {
@@ -155,6 +161,7 @@ public class DocumentGenerator {
 		}
 
 		String accessToken = configuration.getAccessToken();
+		String cloudApplicationUrl = StringUtils.removeEnd(configuration.getApplicationUrl(), "/");
 
 		HttpHeader[] headers = new HttpHeader[] { new HttpHeader(HEADER_AUTHORIZATION, "Bearer " + accessToken),
 				new HttpHeader(HEADER_SECURITY_TOKEN, securityToken),
@@ -162,10 +169,12 @@ public class DocumentGenerator {
 
 		JSONObject body = new JSONObject();
 		body.put("requestId", requestId);
-		body.put("applicationUrl", DocumentGenerator.getApplicationURL());
+		body.put("applicationUrl", cloudApplicationUrl);
 		body.put("generatePath", ConfigurationManager.GENERATE_PATH);
 		body.put("resultPath", ConfigurationManager.RESULT_PATH);
 		body.put("waitForResult", this.waitForResult);
+		body.put("timezone", timezoneId);
+		body.put("useScreenMediaType", USE_SCREEN_MEDIATYPE);
 		body.put("timeout", timeout);
 		body.put("moduleVersion", ConfigurationManager.MODULE_VERSION);
 		body.put("runtimeVersion", com.mendix.core.conf.Configuration.RUNTIME_VERSION);
@@ -198,8 +207,6 @@ public class DocumentGenerator {
 
 	public static String getApplicationURL() {
 		String appUrl = Core.getConfiguration().getApplicationRootUrl();
-		if (Constants.getUseCustomApplicationUrl())
-			appUrl = Constants.getCustomApplicationUrl();
 		return StringUtils.removeEnd(appUrl, "/");
 	}
 
@@ -227,6 +234,16 @@ public class DocumentGenerator {
 			return documentgeneration.proxies.constants.Constants.getAsyncTimeoutInSeconds() * 1000;
 		}
 	}
+	
+	public String getTimezoneIdFromSession(ISession session) {
+		TimeZone timezone = session.getTimeZone();
+		
+		if (timezone != null) {
+			return timezone.getID();
+		} else {
+			return DEFAULT_TIMEZONE;
+		}
+	}
 
 	private void collectAndLogProcessOutput(Process process) throws IOException {
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
@@ -240,5 +257,7 @@ public class DocumentGenerator {
 
 	public static final String HEADER_SECURITY_TOKEN = "X-Security-Token";
 	private static final String HEADER_AUTHORIZATION = "Authorization";
+	private static final String DEFAULT_TIMEZONE = "GMT";
+	private static final boolean USE_SCREEN_MEDIATYPE = true;
 	private static final ILogNode logging = Logging.logNode;
 }

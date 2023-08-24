@@ -2,9 +2,12 @@ package documentgeneration.implementation;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import com.mendix.core.Core;
 import com.mendix.core.CoreException;
+import com.mendix.core.conf.RuntimeVersion;
 import com.mendix.externalinterface.connector.RequestHandler;
 import com.mendix.logging.ILogNode;
 import com.mendix.m2ee.api.IMxRuntimeRequest;
@@ -99,23 +102,22 @@ public class DocGenRequestHandler extends RequestHandler {
 			documentRequest.setDocumentRequest_Session(Session.initialize(Core.createSystemContext(), session.getMendixObject()));
 			documentRequest.commit();
 
-			response.addCookie("XASSESSIONID", session.getId().toString(), "/", "", -1);
-			response.addCookie("XASID", "0." + Core.getXASId(), "/", "", -1);
+			addCookies(response, session);
 		}
 
 		response.getHttpServletResponse().sendRedirect(DocumentGenerator.getApplicationURL() + "/p/generate-document/"
-				+ documentRequest.getMendixObject().getId().toLong());
+				+ documentRequest.getMendixObject().getId().toLong() + "?profile=Responsive");
 	}
 
 	private void processResult(IMxRuntimeRequest request, IMxRuntimeResponse response, ISession session,
 			DocumentRequest documentRequest) throws CoreException {
 
-		IContext userContext = session.createContext();
-		FileDocument outputDocument = this.getFileDocument(userContext, documentRequest);
+		IContext sudoContext = session.createContext().createSudoClone();
+		FileDocument outputDocument = DocGenRequestHandler.getFileDocument(sudoContext, documentRequest);
 
 		if (outputDocument != null) {
 			try (InputStream is = request.getInputStream()) {
-				Core.storeFileDocumentContent(userContext, outputDocument.getMendixObject(), is);
+				Core.storeFileDocumentContent(sudoContext, outputDocument.getMendixObject(), is);
 			} catch (IOException e) {
 				logging.error("Could not write to file: " + e.getMessage());
 				return;
@@ -126,9 +128,9 @@ public class DocGenRequestHandler extends RequestHandler {
 		}
 	}
 
-	private FileDocument getFileDocument(IContext context, DocumentRequest documentRequest) {
+	private static FileDocument getFileDocument(IContext context, DocumentRequest documentRequest) {
 		try {
-			FileDocument document = documentRequest.getDocumentRequest_FileDocument();
+			FileDocument document = documentRequest.getDocumentRequest_FileDocument(context);
 
 			if (document != null) {
 				logging.trace("Using existing FileDocument object");
@@ -142,10 +144,33 @@ public class DocGenRequestHandler extends RequestHandler {
 		return DocumentGenerator.generateFileDocument(context, documentRequest.getResultEntity(),
 				documentRequest.getFileName());
 	}
+	
+	private static void addCookies(IMxRuntimeResponse response, ISession session) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+		String[] runtimeVersion = RuntimeVersion.getInstance().toString().split("\\.");
+		
+		if ((Integer.parseInt(runtimeVersion[0]) == 9 && Integer.parseInt(runtimeVersion[1]) >= 20) || Integer.parseInt(runtimeVersion[0]) >= 10) {
+			// Use reflection to call the addCookie method with the 7th parameter for 'isHostOnly', which was added in 9.20
+			// Based on the SessionHandler implementation of the Deeplink module (https://github.com/mendix/DeeplinkModule)
+			@SuppressWarnings("rawtypes")
+			Class[] methodSignature = {String.class, String.class, String.class, String.class, int.class, boolean.class, boolean.class};
+			Method addCookie = response.getClass().getMethod("addCookie", methodSignature);
+			
+			// For Mx 9.20 and above: 
+			// addCookie(String key, String value, String path, String domain, int expiry, boolean isHttpOnly, boolean isHostOnly)
+			addCookie.invoke(response, Core.getConfiguration().getSessionIdCookieName(), session.getId().toString(), "/", "", -1, true, true);
+			addCookie.invoke(response, XAS_ID, "0." + Core.getXASId(),"/", "", -1, true, true);
+		} else {
+			// For Mx 9.19 and below:
+			// addCookie(String key, String value, String path, String domain, int expiry, boolean isHttpOnly)
+			response.addCookie(Core.getConfiguration().getSessionIdCookieName(), session.getId().toString(), "/", "", -1, true);
+			response.addCookie(XAS_ID, "0." + Core.getXASId(),"/", "", -1, true);
+		}
+	}
 
 	private static final ILogNode logging = Logging.logNode;
 	public static final String ENDPOINT = "docgen/";
 	public static final String GENERATE_PATH = "generate";
 	public static final String RESULT_PATH = "result";
 	public static final String VERIFY_PATH = "verify";
+	private static final String XAS_ID = "XASID";
 }

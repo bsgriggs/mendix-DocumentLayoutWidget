@@ -1,6 +1,12 @@
 {
     "Page": [
         {
+            "name": "Enable export to PDF",
+            "type": "Toggle",
+            "description": "Enable exporting this page to PDF using the Document Generation module.",
+            "class": "enable-export-pdf document-content"
+        },
+        {
             "name": "Page orientation",
             "type": "Dropdown",
             "description": "The page orientation to use when exporting to PDF.",
@@ -67,6 +73,29 @@
             "type": "Toggle",
             "description": "Show page numbers when exporting to PDF.",
             "class": "enable-page-numbers"
+        }
+    ],
+    "DivContainer": [
+        {
+            "name": "Add page break",
+            "type": "Dropdown",
+            "description": "Add a page break before or after this container when exporting to PDF.",
+            "options": [
+                {
+                    "name": "Before",
+                    "class": "page-break-before"
+                },
+                {
+                    "name": "After",
+                    "class": "page-break-after"
+                }
+            ] 
+        },
+        {
+            "name": "Avoid break inside",
+            "type": "Toggle",
+            "description": "Prevent page break inside this container when exporting to PDF.",
+            "class": "avoid-page-break-inside"
         }
     ]
 }

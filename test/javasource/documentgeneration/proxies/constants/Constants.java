@@ -37,14 +37,6 @@ public class Constants
 	}
 
 	/**
-	* Application URL without trailing slash, for example: http://localhost:8080
-	*/
-	public static java.lang.String getCustomApplicationUrl()
-	{
-		return (java.lang.String)Core.getConfiguration().getConstantValue("DocumentGeneration.CustomApplicationUrl");
-	}
-
-	/**
 	* Path to Chrome or Chromium executable, for example: C:/Program Files/Google/Chrome/Application/Chrome.exe
 	*/
 	public static java.lang.String getCustomChromePath()
@@ -101,11 +93,6 @@ public class Constants
 	public static java.lang.Long getTokenLifetimeInSeconds()
 	{
 		return (java.lang.Long)Core.getConfiguration().getConstantValue("DocumentGeneration.TokenLifetimeInSeconds");
-	}
-
-	public static boolean getUseCustomApplicationUrl()
-	{
-		return (java.lang.Boolean)Core.getConfiguration().getConstantValue("DocumentGeneration.UseCustomApplicationUrl");
 	}
 
 	/**

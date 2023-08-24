@@ -1,7 +1,7 @@
 {
   "name": "documentlayoutwidget",
   "widgetName": "DocumentLayoutWidget",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Document layout widget",
   "copyright": "2023 Aiden",
   "author": "Marcel Groeneweg",

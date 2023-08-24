@@ -44,6 +44,42 @@ async function waitForContent(page) {
     });
 }
 
+async function emulateScreenMedia(page) {
+    await withTiming("Emulate screen media", async () => {
+        await page.emulateMediaType("screen");
+    }).catch((error) => {
+        throw new Error(`Failed to emulate screen media: ${error}`);
+    });
+}
+
+async function injectClassToBodyElement(page, className) {
+    await withTiming(
+        `Inject class '${className}' to body element`,
+        async () => {
+            const bodyHandle = await page.$("body");
+            if (bodyHandle !== undefined) {
+                await page.evaluate(
+                    (body, className) => body.classList.add(className),
+                    bodyHandle,
+                    className
+                );
+                await bodyHandle.dispose();
+            }
+        }
+    ).catch((error) => {
+        throw new Error(`Failed to inject class to body element: ${error}`);
+    });
+}
+
+async function emulateTimezone(page, timezone) {
+    await withTiming("Emulate timezone", async () => {
+        await page.emulateTimezone(timezone);
+        logMessage(`Emulating timezone: ${timezone}`);
+    }).catch((error) => {
+        throw new Error(`Failed to emulate timezone: ${error}`);
+    });
+}
+
 async function pageOrientationIsLandscape(page) {
     if (page === null) throw new Error("Browser not initialized");
 
@@ -113,9 +149,19 @@ function getHeaderFooterOptions(enablePageNumbers) {
     };
 }
 
-async function generateDocument(page, pageUrl, securityToken, requestAnalyzer) {
+async function generateDocument(
+    page,
+    pageUrl,
+    securityToken,
+    timezone,
+    useScreenMediaType,
+    requestAnalyzer
+) {
+    if (useScreenMediaType) await emulateScreenMedia(page);
+    await emulateTimezone(page, timezone ?? "GMT");
     await navigateToPage(page, pageUrl, securityToken, requestAnalyzer);
     await waitForContent(page);
+    await injectClassToBodyElement(page, "document-generation-body-injected");
 
     const isLandscape = await pageOrientationIsLandscape(page);
     const pageSize = await determinePageSize(page);
@@ -152,9 +198,21 @@ export function createDocumentGenerator(browser, requestAnalyzer) {
         initialize: async () => {
             page = await browser.openPage();
         },
-        generateDocument: async (pageUrl, securityToken) =>
+        generateDocument: async (
+            pageUrl,
+            securityToken,
+            timezone,
+            useScreenMediaType
+        ) =>
             withTiming("Generate document", async () =>
-                generateDocument(page, pageUrl, securityToken, requestAnalyzer)
+                generateDocument(
+                    page,
+                    pageUrl,
+                    securityToken,
+                    timezone,
+                    useScreenMediaType,
+                    requestAnalyzer
+                )
             ),
         getPageMetrics: async () => getPageMetrics(page),
         getRequestStatistics: () => getRequestStatistics(requestAnalyzer),

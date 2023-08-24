@@ -8,6 +8,14 @@
     width: 100%;
 }
 
+.document-layout-widget .layout-table > thead {
+    break-inside: avoid;
+}
+
+.document-layout-widget .layout-table > tfoot {
+    break-inside: avoid;
+}
+
 .document-layout-widget .footer {
     position: fixed;
     bottom: 0;
