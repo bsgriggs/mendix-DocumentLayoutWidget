@@ -113,6 +113,9 @@ public class DocumentGenerator {
 		if (USE_SCREEN_MEDIATYPE)
 			command.add("--use-screen-media");
 
+		if (WAIT_FOR_IDLE_NETWORK)
+			command.add("--wait-for-idle-network");
+		
 		// Execute browser process
 		ProcessBuilder processBuilder = new ProcessBuilder().command(command).redirectErrorStream(true)
 				.redirectOutput(Redirect.PIPE);
@@ -175,6 +178,7 @@ public class DocumentGenerator {
 		body.put("waitForResult", this.waitForResult);
 		body.put("timezone", timezoneId);
 		body.put("useScreenMediaType", USE_SCREEN_MEDIATYPE);
+		body.put("waitForIdleNetwork", WAIT_FOR_IDLE_NETWORK);
 		body.put("timeout", timeout);
 		body.put("moduleVersion", ConfigurationManager.MODULE_VERSION);
 		body.put("runtimeVersion", com.mendix.core.conf.Configuration.RUNTIME_VERSION);
@@ -257,7 +261,10 @@ public class DocumentGenerator {
 
 	public static final String HEADER_SECURITY_TOKEN = "X-Security-Token";
 	private static final String HEADER_AUTHORIZATION = "Authorization";
-	private static final String DEFAULT_TIMEZONE = "GMT";
+	
 	private static final boolean USE_SCREEN_MEDIATYPE = true;
+	private static final boolean WAIT_FOR_IDLE_NETWORK = true;
+	private static final String DEFAULT_TIMEZONE = "GMT";
+	
 	private static final ILogNode logging = Logging.logNode;
 }

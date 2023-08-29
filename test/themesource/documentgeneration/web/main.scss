@@ -22,7 +22,9 @@ $document-background-color: #ffffff !default;
     -webkit-print-color-adjust: exact;
     
     .mx-demouserswitcher, 
-    .sprintrFeedback {
+    .sprintrFeedback, 
+    .mx-feedback__startBtn,
+    .mxfeedback-button {
         display: none;
     }
 }

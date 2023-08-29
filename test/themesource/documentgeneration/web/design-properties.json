@@ -1,7 +1,7 @@
 {
     "Page": [
         {
-            "name": "Enable export to PDF",
+            "name": "Enable PDF export",
             "type": "Toggle",
             "description": "Enable exporting this page to PDF using the Document Generation module.",
             "class": "enable-export-pdf document-content"

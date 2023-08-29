@@ -16,6 +16,7 @@ const options = parseArguments([
     { name: "security-token" },
     { name: "timezone" },
     { name: "use-screen-media", type: Boolean },
+    { name: "wait-for-idle-network", type: Boolean },
     { name: "enable-metrics", type: Boolean },
 ]);
 
@@ -28,6 +29,7 @@ const {
     "security-token": securityToken,
     timezone: timezone,
     "use-screen-media": useScreenMediaType,
+    "wait-for-idle-network": waitForIdleNetwork,
     "enable-metrics": enableMetrics,
 } = options;
 
@@ -47,7 +49,8 @@ await withBrowser(async (browser) => {
         pageUrl,
         securityToken,
         timezone,
-        useScreenMediaType
+        useScreenMediaType,
+        waitForIdleNetwork
     );
 
     const documentSize = formatSize(document.length, {

@@ -1,19 +1,34 @@
 import { withTiming, logMessage, logLevel } from "./logging.js";
 
-async function navigateToPage(page, pageUrl, securityToken, requestAnalyzer) {
+async function navigateToPage(
+    page,
+    pageUrl,
+    securityToken,
+    requestAnalyzer,
+    waitForIdleNetwork
+) {
     if (page === undefined) throw new Error("Browser not initialized");
 
     await page.setRequestInterception(true);
-    let interceptRequests = true;
+    let interceptNavigationRequests = true;
 
     page.on("request", (request) => {
-        if (!interceptRequests || !request.isNavigationRequest())
-            return request.continue();
+        if (
+            waitForIdleNetwork === true &&
+            request.url().includes("livereload.js")
+        ) {
+            logMessage(`Aborting request ${request.url()}`);
+            return request.abort();
+        }
 
-        const headers = request.headers();
-        headers["X-Security-Token"] = securityToken;
-        interceptRequests = false;
-        request.continue({ headers });
+        if (interceptNavigationRequests && request.isNavigationRequest()) {
+            const headers = request.headers();
+            headers["X-Security-Token"] = securityToken;
+            interceptNavigationRequests = false;
+            return request.continue({ headers });
+        }
+
+        return request.continue();
     });
 
     if (requestAnalyzer !== undefined) {
@@ -29,16 +44,20 @@ async function navigateToPage(page, pageUrl, securityToken, requestAnalyzer) {
     );
 }
 
-async function waitForContent(page) {
+async function waitForContent(page, waitForIdleNetwork) {
     if (page === null) throw new Error("Browser not initialized");
 
-    await withTiming("Wait for content to load", async () =>
-        Promise.all([
-            page.waitForNavigation({ waitUntil: "networkidle2" }),
-            page.waitForSelector("#content .document-content", {
-                visible: true,
-            }),
-        ])
+    const waitUntil = waitForIdleNetwork ? "networkidle0" : "networkidle2";
+
+    await withTiming(
+        `Wait for content to load using ${waitUntil} strategy`,
+        async () =>
+            Promise.all([
+                page.waitForNavigation({ waitUntil }),
+                page.waitForSelector("#content .document-content", {
+                    visible: true,
+                }),
+            ])
     ).catch((error) => {
         throw new Error(`Failed to load page: ${error}`);
     });
@@ -155,12 +174,19 @@ async function generateDocument(
     securityToken,
     timezone,
     useScreenMediaType,
+    waitForIdleNetwork,
     requestAnalyzer
 ) {
     if (useScreenMediaType) await emulateScreenMedia(page);
     await emulateTimezone(page, timezone ?? "GMT");
-    await navigateToPage(page, pageUrl, securityToken, requestAnalyzer);
-    await waitForContent(page);
+    await navigateToPage(
+        page,
+        pageUrl,
+        securityToken,
+        requestAnalyzer,
+        waitForIdleNetwork
+    );
+    await waitForContent(page, waitForIdleNetwork);
     await injectClassToBodyElement(page, "document-generation-body-injected");
 
     const isLandscape = await pageOrientationIsLandscape(page);
@@ -202,7 +228,8 @@ export function createDocumentGenerator(browser, requestAnalyzer) {
             pageUrl,
             securityToken,
             timezone,
-            useScreenMediaType
+            useScreenMediaType,
+            waitForIdleNetwork
         ) =>
             withTiming("Generate document", async () =>
                 generateDocument(
@@ -211,6 +238,7 @@ export function createDocumentGenerator(browser, requestAnalyzer) {
                     securityToken,
                     timezone,
                     useScreenMediaType,
+                    waitForIdleNetwork,
                     requestAnalyzer
                 )
             ),
