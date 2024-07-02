@@ -1,6 +1,7 @@
 package documentgeneration.implementation;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
@@ -12,6 +13,7 @@ import com.mendix.http.HttpHeader;
 import com.mendix.http.HttpMethod;
 import com.mendix.http.HttpResponse;
 import com.mendix.systemwideinterfaces.core.IContext;
+import com.mendix.thirdparty.org.json.JSONException;
 import com.mendix.thirdparty.org.json.JSONObject;
 
 public class TokenRequest {
@@ -26,7 +28,7 @@ public class TokenRequest {
 		data.put(key, value);
 		return this;
 	}
-	
+
 	public String getRequestBody() {
 		StringBuilder requestBuilder = new StringBuilder();
 		requestBuilder.append("grant_type=" + this.grantType);
@@ -42,29 +44,29 @@ public class TokenRequest {
 	}
 
 	public HttpResponse execute() {
-		HttpHeader[] headers = new HttpHeader[] { new HttpHeader("Content-Type", "application/x-www-form-urlencoded") };		
+		HttpHeader[] headers = new HttpHeader[] { new HttpHeader("Content-Type", "application/x-www-form-urlencoded") };
 
 		return Core.http().executeHttpRequest(ConfigurationManager.getTokenEndpoint(), HttpMethod.POST, headers,
 				new ByteArrayInputStream(this.getRequestBody().getBytes()));
 	}
-	
+
 	public static JSONObject parseTokenResponse(IContext context, String response) {
 		try {
 			return new JSONObject(response);
-		} catch (Exception e) {
+		} catch (JSONException e) {
 			throw new RuntimeException("Token response is not a valid JSON object");
 		}
 	}
-	
+
 	public static JSONObject parseTokenResponse(IContext context, HttpResponse response) {
 		String rawResponse;
-		
+
 		try {
 			rawResponse = IOUtils.toString(response.getContent(), StandardCharsets.UTF_8);
-		} catch (Exception e) {
+		} catch (IOException e) {
 			throw new RuntimeException("Received invalid token response: " + e.getMessage());
 		}
-		
+
 		return TokenRequest.parseTokenResponse(context, rawResponse);
 
 	}

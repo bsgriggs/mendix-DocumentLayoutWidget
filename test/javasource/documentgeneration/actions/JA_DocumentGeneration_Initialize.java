@@ -13,8 +13,8 @@ import com.mendix.core.Core;
 import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.webui.CustomJavaAction;
+import documentgeneration.implementation.ConfigurationManager;
 import documentgeneration.implementation.DocGenRequestHandler;
-import documentgeneration.implementation.DocumentGenerator;
 import documentgeneration.implementation.LocalServiceLocator;
 import documentgeneration.implementation.Logging;
 
@@ -32,8 +32,10 @@ public class JA_DocumentGeneration_Initialize extends CustomJavaAction<java.lang
 		Core.addRequestHandler(DocGenRequestHandler.ENDPOINT, new DocGenRequestHandler());
 		logging.info("Added document generation request handler");
 
-		if (DocumentGenerator.isLocalDevelopmentEnvironment())
+		if (ConfigurationManager.useLocalService()) {
+			logging.trace("Using local service");
 			LocalServiceLocator.verify();
+		}
 		
 		return true;
 		// END USER CODE

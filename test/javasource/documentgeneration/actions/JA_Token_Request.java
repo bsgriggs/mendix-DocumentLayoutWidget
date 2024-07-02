@@ -16,25 +16,31 @@ import documentgeneration.implementation.TokenManager;
 
 public class JA_Token_Request extends CustomJavaAction<IMendixObject>
 {
-	private java.lang.String username;
-	private java.lang.String password;
-	private java.lang.String applicationUrl;
-	private java.lang.String appId;
+	private final documentgeneration.proxies.Enum_DeploymentType deploymentType;
+	private final java.lang.String appId;
+	private final java.lang.String personalAccessToken;
+	private final java.lang.String applicationUrl;
 
-	public JA_Token_Request(IContext context, java.lang.String username, java.lang.String password, java.lang.String applicationUrl, java.lang.String appId)
+	public JA_Token_Request(
+		IContext context,
+		java.lang.String _deploymentType,
+		java.lang.String _appId,
+		java.lang.String _personalAccessToken,
+		java.lang.String _applicationUrl
+	)
 	{
 		super(context);
-		this.username = username;
-		this.password = password;
-		this.applicationUrl = applicationUrl;
-		this.appId = appId;
+		this.deploymentType = _deploymentType == null ? null : documentgeneration.proxies.Enum_DeploymentType.valueOf(_deploymentType);
+		this.appId = _appId;
+		this.personalAccessToken = _personalAccessToken;
+		this.applicationUrl = _applicationUrl;
 	}
 
 	@java.lang.Override
 	public IMendixObject executeAction() throws Exception
 	{
 		// BEGIN USER CODE
-		return TokenManager.requestAccessToken(getContext(), username, password, applicationUrl, appId);
+		return TokenManager.requestAccessToken(getContext(), deploymentType, appId, personalAccessToken, applicationUrl);
 		// END USER CODE
 	}
 

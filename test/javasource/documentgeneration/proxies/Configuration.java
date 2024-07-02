@@ -4,7 +4,7 @@
 
 package documentgeneration.proxies;
 
-public class Configuration
+public class Configuration implements com.mendix.systemwideinterfaces.core.IEntityProxy
 {
 	private final com.mendix.systemwideinterfaces.core.IMendixObject configurationMendixObject;
 
@@ -20,6 +20,7 @@ public class Configuration
 	 */
 	public enum MemberNames
 	{
+		DeploymentType("DeploymentType"),
 		RegistrationStatus("RegistrationStatus"),
 		ApplicationUrl("ApplicationUrl"),
 		AccessToken("AccessToken"),
@@ -61,15 +62,6 @@ public class Configuration
 	}
 
 	/**
-	 * @deprecated Use 'Configuration.load(IContext, IMendixIdentifier)' instead.
-	 */
-	@java.lang.Deprecated
-	public static documentgeneration.proxies.Configuration initialize(com.mendix.systemwideinterfaces.core.IContext context, com.mendix.systemwideinterfaces.core.IMendixIdentifier mendixIdentifier) throws com.mendix.core.CoreException
-	{
-		return documentgeneration.proxies.Configuration.load(context, mendixIdentifier);
-	}
-
-	/**
 	 * Initialize a proxy using context (recommended). This context will be used for security checking when the get- and set-methods without context parameters are called.
 	 * The get- and set-methods with context parameter should be used when for instance sudo access is necessary (IContext.createSudoClone() can be used to obtain sudo access).
 	 * @param context The context to be used
@@ -97,40 +89,52 @@ public class Configuration
 	}
 
 	/**
-	 * Commit the changes made on this proxy object.
-	 * @throws com.mendix.core.CoreException
+	 * Get value of DeploymentType
+	 * @param deploymenttype
 	 */
-	public final void commit() throws com.mendix.core.CoreException
+	public final documentgeneration.proxies.Enum_DeploymentType getDeploymentType()
 	{
-		com.mendix.core.Core.commit(context, getMendixObject());
+		return getDeploymentType(getContext());
 	}
 
 	/**
-	 * Commit the changes made on this proxy object using the specified context.
-	 * @throws com.mendix.core.CoreException
+	 * @param context
+	 * @return value of DeploymentType
 	 */
-	public final void commit(com.mendix.systemwideinterfaces.core.IContext context) throws com.mendix.core.CoreException
+	public final documentgeneration.proxies.Enum_DeploymentType getDeploymentType(com.mendix.systemwideinterfaces.core.IContext context)
 	{
-		com.mendix.core.Core.commit(context, getMendixObject());
+		Object obj = getMendixObject().getValue(context, MemberNames.DeploymentType.toString());
+		if (obj == null) {
+			return null;
+		}
+		return documentgeneration.proxies.Enum_DeploymentType.valueOf((java.lang.String) obj);
 	}
 
 	/**
-	 * Delete the object.
+	 * Set value of DeploymentType
+	 * @param deploymenttype
 	 */
-	public final void delete()
+	public final void setDeploymentType(documentgeneration.proxies.Enum_DeploymentType deploymenttype)
 	{
-		com.mendix.core.Core.delete(context, getMendixObject());
+		setDeploymentType(getContext(), deploymenttype);
 	}
 
 	/**
-	 * Delete the object using the specified context.
+	 * Set value of DeploymentType
+	 * @param context
+	 * @param deploymenttype
 	 */
-	public final void delete(com.mendix.systemwideinterfaces.core.IContext context)
+	public final void setDeploymentType(com.mendix.systemwideinterfaces.core.IContext context, documentgeneration.proxies.Enum_DeploymentType deploymenttype)
 	{
-		com.mendix.core.Core.delete(context, getMendixObject());
+		if (deploymenttype != null) {
+			getMendixObject().setValue(context, MemberNames.DeploymentType.toString(), deploymenttype.toString());
+		} else {
+			getMendixObject().setValue(context, MemberNames.DeploymentType.toString(), null);
+		}
 	}
+
 	/**
-	 * Set value of RegistrationStatus
+	 * Get value of RegistrationStatus
 	 * @param registrationstatus
 	 */
 	public final documentgeneration.proxies.Enum_RegistrationStatus getRegistrationStatus()
@@ -390,17 +394,13 @@ public class Configuration
 		getMendixObject().setValue(context, MemberNames.VerificationTokenExpirationDate.toString(), verificationtokenexpirationdate);
 	}
 
-	/**
-	 * @return the IMendixObject instance of this proxy for use in the Core interface.
-	 */
+	@java.lang.Override
 	public final com.mendix.systemwideinterfaces.core.IMendixObject getMendixObject()
 	{
 		return configurationMendixObject;
 	}
 
-	/**
-	 * @return the IContext instance of this proxy, or null if no IContext instance was specified at initialization.
-	 */
+	@java.lang.Override
 	public final com.mendix.systemwideinterfaces.core.IContext getContext()
 	{
 		return context;
@@ -426,21 +426,13 @@ public class Configuration
 		return getMendixObject().hashCode();
 	}
 
-	/**
-	 * @return String name of this class
-	 */
+  /**
+   * Gives full name ("Module.Entity" name) of the type of the entity.
+   *
+   * @return the name
+   */
 	public static java.lang.String getType()
 	{
 		return entityName;
-	}
-
-	/**
-	 * @return String GUID from this object, format: ID_0000000000
-	 * @deprecated Use getMendixObject().getId().toLong() to get a unique identifier for this object.
-	 */
-	@java.lang.Deprecated
-	public java.lang.String getGUID()
-	{
-		return "ID_" + getMendixObject().getId().toLong();
 	}
 }

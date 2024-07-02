@@ -14,23 +14,28 @@ import com.mendix.thirdparty.org.json.JSONException;
 import com.mendix.thirdparty.org.json.JSONObject;
 
 import documentgeneration.proxies.Configuration;
+import documentgeneration.proxies.Enum_DeploymentType;
 import documentgeneration.proxies.Enum_RegistrationStatus;
 import documentgeneration.proxies.TokenResult;
 
 public class TokenManager {
-	public static IMendixObject requestAccessToken(IContext context, String username, String password, 
-			String applicationUrl, String appId) throws CoreException {
-		
-		if (applicationUrl == null)
-			throw new RuntimeException("Invalid Application URL");
+	public static IMendixObject requestAccessToken(IContext context, Enum_DeploymentType deploymentType, String appId,
+			String password, String applicationUrl) throws CoreException {
+
+		if (deploymentType == null)
+			throw new RuntimeException("Invalid Deployment Type");
 		if (appId == null)
 			throw new RuntimeException("Invalid App ID");
+		if (applicationUrl == null)
+			throw new RuntimeException("Invalid Application URL");
 		
 		String verificationToken = VerificationManager.setVerificationToken(Core.createSystemContext());
-
-		TokenRequest tokenRequest = new TokenRequest("password").addFormData("username", username)
-				.addFormData("password", password).addFormData("client_id", applicationUrl.toLowerCase())
+		
+		TokenRequest tokenRequest = new TokenRequest("password")
+				.addFormData("deployment_type", deploymentType.toString())
 				.addFormData("app_id", appId.toLowerCase())
+				.addFormData("password", password)
+				.addFormData("client_id", applicationUrl.toLowerCase())
 				.addFormData("verification_path", ConfigurationManager.VERIFY_PATH)
 				.addFormData("verification_token", verificationToken);
 
@@ -64,21 +69,21 @@ public class TokenManager {
 
 		return tokenResult.getMendixObject();
 	}
-	
+
 	public static boolean refreshTokens(IContext context) throws CoreException, JSONException {
 		Configuration configuration = ConfigurationManager.getConfigurationObject(context);
-		
+
 		if (!Enum_RegistrationStatus.Registered.equals(configuration.getRegistrationStatus()))
 			throw new RuntimeException("Unable to refresh tokens, app is not registered");
 
 		TokenRequest tokenRequest = new TokenRequest("refresh_token")
 				.addFormData("client_id", configuration.getApplicationUrl())
 				.addFormData("refresh_token", configuration.getRefreshToken());
-		
+
 		HttpResponse httpResponse = tokenRequest.execute();
 		JSONObject tokenResponse = TokenRequest.parseTokenResponse(context, httpResponse);
 
-		if (httpResponse.getStatusCode() == 200) {			
+		if (httpResponse.getStatusCode() == 200) {
 			ConfigurationManager.updateTokenInformation(configuration, tokenResponse.getString("access_token"),
 					tokenResponse.getString("refresh_token"), tokenResponse.getInt("expires_in"));
 			configuration.commit(context);
@@ -96,8 +101,8 @@ public class TokenManager {
 			return false;
 		}
 	}
-	
-	public static boolean tryRefreshTokens(IContext context) {	
+
+	public static boolean tryRefreshTokens(IContext context) {
 		try {
 			return TokenManager.refreshTokens(context);
 		} catch (Exception e) {
@@ -105,15 +110,15 @@ public class TokenManager {
 			return false;
 		}
 	}
-	
-	public static boolean accessTokenIsExpired(Configuration configuration) {		
+
+	public static boolean accessTokenIsExpired(Configuration configuration) {
 		if (configuration.getAccessTokenExpirationDate() == null)
 			return true;
-		
+
 		// Consider access token as expired if expiration date is within one minute
 		if (configuration.getAccessTokenExpirationDate().before(DateUtils.addMinutes(new Date(), 1)))
 			return true;
-		
+
 		return false;
 	}
 

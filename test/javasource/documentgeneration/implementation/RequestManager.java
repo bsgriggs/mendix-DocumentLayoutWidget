@@ -5,62 +5,92 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import com.mendix.core.Core;
+import com.mendix.core.CoreException;
 import com.mendix.logging.ILogNode;
-import com.mendix.systemwideinterfaces.core.IMendixIdentifier;
+import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 
+import documentgeneration.implementation.exceptions.DocGenPollingException;
+import documentgeneration.proxies.DocumentRequest;
+import documentgeneration.proxies.Enum_DocumentRequest_Status;
+import system.proxies.FileDocument;
+
 interface RequestInfo {
-    boolean canContinue();
+	boolean canContinue();
 }
 
 public class RequestManager {
-    private static final ConcurrentMap<Long, Thread> pendingWaits = new ConcurrentHashMap<>();
+	private static final ConcurrentMap<String, Thread> pendingWaits = new ConcurrentHashMap<>();
 
-    public static IMendixObject waitForDocumentContent(
-            IWaitStrategy waitStrategy,
-            String entityType,
-            IMendixIdentifier requestIdentifier
-    ) {
-        pendingWaits.put(requestIdentifier.toLong(), Thread.currentThread());
-        try {
-            for (int i = 0; waitStrategy.canContinue(); i++) {
-                Optional<IMendixObject> mendixObject = loadFileDocumentWithContent(entityType, requestIdentifier.toLong());
-                if (mendixObject.isPresent()) {
-                    logging.trace("Document content is available");
-                    return mendixObject.get();
-                }
+	public static IMendixObject waitForResult(IWaitStrategy waitStrategy, String requestId) {
+		pendingWaits.put(requestId, Thread.currentThread());
+		try {
+			for (int i = 0; waitStrategy.canContinue(); i++) {
+				Optional<DocumentRequest> requestObject = loadFinalizedDocumentRequest(requestId);
+				if (requestObject.isPresent()) {
+					logging.trace("Received document result for request " + requestId);
+					return processResult(requestObject.get());
+				}
 
-                logging.trace("Document content is not yet available, continue polling");
-                waitStrategy.wait(i);
-            }
-            logging.trace("Document content has not appeared, stopping polling");
-        } catch (InterruptedException e) {
-            Optional<IMendixObject> mendixObject = loadFileDocumentWithContent(entityType, requestIdentifier.toLong());
-            if (mendixObject.isPresent()) {
-                logging.trace("Interrupted polling, document content is available");
-                return mendixObject.get();
-            }
-        } finally {
-            pendingWaits.remove(requestIdentifier.toLong());
-        }
-        throw new RuntimeException("Timeout while waiting for document content; no content was received");
-    }
+				logging.trace("Document result is not yet available, continue polling");
+				waitStrategy.wait(i);
+			}
+			logging.trace("Document result has not appeared, stopping polling");
+		} catch (InterruptedException e) {
+			Optional<DocumentRequest> requestObject = loadFinalizedDocumentRequest(requestId);
+			if (requestObject.isPresent()) {
+				logging.trace("Interrupted polling, document result is available for request " + requestId);
+				return processResult(requestObject.get());
+			}
+		} finally {
+			pendingWaits.remove(requestId);
+		}
 
-    public static void completePendingRequest(IMendixIdentifier id) {
-        Thread waitingThread = pendingWaits.get(id.toLong());
-        if (waitingThread != null) {
-            waitingThread.interrupt();
-        }
-    }
-    
-    private static Optional<IMendixObject> loadFileDocumentWithContent(String entityName, long requestIdentifier) {
-        String query = String.format("//%s[DocumentGeneration.DocumentRequest_FileDocument = $id][HasContents]", entityName);
-        return Core.createXPathQuery(query)
-                .setVariable("id", requestIdentifier)
-                .execute(Core.createSystemContext())
-                .stream()
-                .findAny();
-    }
-    
-    private static final ILogNode logging = Logging.logNode;
+		failRequest(requestId);
+		throw new DocGenPollingException("Timeout while waiting for document result for request " + requestId);
+	}
+
+	public static void interruptPendingRequest(String requestId) {
+		Thread waitingThread = pendingWaits.get(requestId);
+		if (waitingThread != null) {
+			waitingThread.interrupt();
+		}
+	}
+
+	private static Optional<DocumentRequest> loadFinalizedDocumentRequest(String requestId) {
+		String query = "//DocumentGeneration.DocumentRequest[RequestId=$RequestId][Status = 'Completed' or Status = 'Failed']";
+		IContext systemContext = Core.createSystemContext();
+
+		return Core.createXPathQuery(query).setVariable("RequestId", requestId).execute(systemContext).stream()
+				.map(obj -> DocumentRequest.initialize(systemContext, obj)).findAny();
+	}
+
+	private static IMendixObject processResult(DocumentRequest documentRequest) {
+		if (documentRequest.getStatus().equals(Enum_DocumentRequest_Status.Completed)) {
+			FileDocument fileDocument = DocumentRequestManager.getFileDocument(documentRequest);
+			if (fileDocument == null)
+				throw new RuntimeException("File document not found");
+
+			return fileDocument.getMendixObject();
+		} else if (documentRequest.getStatus().equals(Enum_DocumentRequest_Status.Failed)) {
+			if (documentRequest.getErrorCode() != null)
+				DocumentRequestErrorManager.throwDocumentRequestException(documentRequest);
+
+			throw new RuntimeException("Failed to generate document");
+		} else {
+			throw new RuntimeException("Invalid document request status");
+		}
+	}
+
+	private static void failRequest(String requestId) {
+		DocumentRequest documentRequest = DocumentRequestManager.loadDocumentRequest(requestId,
+				Core.createSystemContext());
+		try {
+			DocumentRequestManager.failDocumentRequest(documentRequest);
+		} catch (CoreException e) {
+			logging.error("Could not update status for request " + requestId);
+		}
+	}
+
+	private static final ILogNode logging = Logging.logNode;
 }

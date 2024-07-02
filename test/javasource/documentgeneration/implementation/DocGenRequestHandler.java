@@ -69,6 +69,8 @@ public class DocGenRequestHandler extends RequestHandler {
 			generateDocument(request, response, session, documentRequest);
 		} else if (RESULT_PATH.equals(path)) {
 			processResult(request, response, session, documentRequest);
+		} else if (ERROR_PATH.equals(path)) {
+			processError(request, response, session, documentRequest);
 		} else {
 			logging.warn("Invalid path: " + path);
 			response.setStatus(IMxRuntimeResponse.BAD_REQUEST);
@@ -98,15 +100,14 @@ public class DocGenRequestHandler extends RequestHandler {
 	private void generateDocument(IMxRuntimeRequest request, IMxRuntimeResponse response, ISession session,
 			DocumentRequest documentRequest) throws Exception {
 
-		if (session != null) {
-			documentRequest.setDocumentRequest_Session(Session.initialize(Core.createSystemContext(), session.getMendixObject()));
-			documentRequest.commit();
+		IContext systemContext = Core.createSystemContext();
+		documentRequest.setDocumentRequest_Session(Session.initialize(systemContext, session.getMendixObject()));
+		documentRequest.commit();
 
-			addCookies(response, session);
-		}
+		addCookies(response, session);
 
-		response.getHttpServletResponse().sendRedirect(DocumentGenerator.getApplicationURL() + "/p/generate-document/"
-				+ documentRequest.getMendixObject().getId().toLong() + "?profile=Responsive");
+		response.getHttpServletResponse().sendRedirect(DocumentGenerator.getEnvironmentApplicationURL(systemContext)
+				+ "/p/generate-document/" + documentRequest.getMendixObject().getId().toLong() + "?profile=Responsive");
 	}
 
 	private void processResult(IMxRuntimeRequest request, IMxRuntimeResponse response, ISession session,
@@ -123,9 +124,24 @@ public class DocGenRequestHandler extends RequestHandler {
 				return;
 			}
 
-			DocumentRequestManager.linkFileDocument(documentRequest, outputDocument);
-			RequestManager.completePendingRequest(documentRequest.getMendixObject().getId());
+			DocumentRequestManager.completeDocumentRequest(documentRequest, outputDocument);
+			RequestManager.interruptPendingRequest(documentRequest.getRequestId());
 		}
+	}
+
+	private void processError(IMxRuntimeRequest request, IMxRuntimeResponse response, ISession session,
+			DocumentRequest documentRequest) throws CoreException, IOException {
+
+		if (DocumentRequestErrorManager.handleDocumentRequestError(documentRequest, request)) {
+			response.setStatus(IMxRuntimeResponse.OK);
+			response.getWriter().write("200 OK");
+		} else {
+			response.setStatus(IMxRuntimeResponse.BAD_REQUEST);
+			response.getWriter().write("400 Bad Request");
+		}
+
+		DocumentRequestManager.failDocumentRequest(documentRequest);
+		RequestManager.interruptPendingRequest(documentRequest.getRequestId());
 	}
 
 	private static FileDocument getFileDocument(IContext context, DocumentRequest documentRequest) {
@@ -144,26 +160,35 @@ public class DocGenRequestHandler extends RequestHandler {
 		return DocumentGenerator.generateFileDocument(context, documentRequest.getResultEntity(),
 				documentRequest.getFileName());
 	}
-	
-	private static void addCookies(IMxRuntimeResponse response, ISession session) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+
+	private static void addCookies(IMxRuntimeResponse response, ISession session)
+			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
 		String[] runtimeVersion = RuntimeVersion.getInstance().toString().split("\\.");
-		
-		if ((Integer.parseInt(runtimeVersion[0]) == 9 && Integer.parseInt(runtimeVersion[1]) >= 20) || Integer.parseInt(runtimeVersion[0]) >= 10) {
-			// Use reflection to call the addCookie method with the 7th parameter for 'isHostOnly', which was added in 9.20
-			// Based on the SessionHandler implementation of the Deeplink module (https://github.com/mendix/DeeplinkModule)
+
+		if ((Integer.parseInt(runtimeVersion[0]) == 9 && Integer.parseInt(runtimeVersion[1]) >= 20)
+				|| Integer.parseInt(runtimeVersion[0]) >= 10) {
+			// Use reflection to call the addCookie method with the 7th parameter for
+			// 'isHostOnly', which was added in 9.20
+			// Based on the SessionHandler implementation of the Deeplink module
+			// (https://github.com/mendix/DeeplinkModule)
 			@SuppressWarnings("rawtypes")
-			Class[] methodSignature = {String.class, String.class, String.class, String.class, int.class, boolean.class, boolean.class};
+			Class[] methodSignature = { String.class, String.class, String.class, String.class, int.class,
+					boolean.class, boolean.class };
 			Method addCookie = response.getClass().getMethod("addCookie", methodSignature);
-			
-			// For Mx 9.20 and above: 
-			// addCookie(String key, String value, String path, String domain, int expiry, boolean isHttpOnly, boolean isHostOnly)
-			addCookie.invoke(response, Core.getConfiguration().getSessionIdCookieName(), session.getId().toString(), "/", "", -1, true, true);
-			addCookie.invoke(response, XAS_ID, "0." + Core.getXASId(),"/", "", -1, true, true);
+
+			// For Mx 9.20 and above:
+			// addCookie(String key, String value, String path, String domain, int expiry,
+			// boolean isHttpOnly, boolean isHostOnly)
+			addCookie.invoke(response, Core.getConfiguration().getSessionIdCookieName(), session.getId().toString(),
+					"/", "", -1, true, true);
+			addCookie.invoke(response, XAS_ID, "0." + Core.getXASId(), "/", "", -1, true, true);
 		} else {
 			// For Mx 9.19 and below:
-			// addCookie(String key, String value, String path, String domain, int expiry, boolean isHttpOnly)
-			response.addCookie(Core.getConfiguration().getSessionIdCookieName(), session.getId().toString(), "/", "", -1, true);
-			response.addCookie(XAS_ID, "0." + Core.getXASId(),"/", "", -1, true);
+			// addCookie(String key, String value, String path, String domain, int expiry,
+			// boolean isHttpOnly)
+			response.addCookie(Core.getConfiguration().getSessionIdCookieName(), session.getId().toString(), "/", "",
+					-1, true);
+			response.addCookie(XAS_ID, "0." + Core.getXASId(), "/", "", -1, true);
 		}
 	}
 
@@ -172,5 +197,6 @@ public class DocGenRequestHandler extends RequestHandler {
 	public static final String GENERATE_PATH = "generate";
 	public static final String RESULT_PATH = "result";
 	public static final String VERIFY_PATH = "verify";
+	public static final String ERROR_PATH = "error";
 	private static final String XAS_ID = "XASID";
 }

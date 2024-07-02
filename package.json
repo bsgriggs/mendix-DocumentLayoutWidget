@@ -1,7 +1,7 @@
 {
   "name": "documentlayoutwidget",
   "widgetName": "DocumentLayoutWidget",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Document layout widget",
   "copyright": "2023 Aiden",
   "author": "Marcel Groeneweg",
@@ -25,17 +25,21 @@
     "release": "pluggable-widgets-tools release:web"
   },
   "devDependencies": {
-    "@mendix/pluggable-widgets-tools": "^9.24.0"
+    "@mendix/pluggable-widgets-tools": "^10.12.0"
   },
-  "dependencies": {
-    "classnames": "^2.2.6"
-  },
+  "dependencies": {},
   "resolutions": {
     "react": "18.2.0",
-    "react-native": "0.70.7"
+    "react-native": "0.72.7",
+    "react-dom": "18.2.0",
+    "@types/react": "18.2.0",
+    "@types/react-dom": "18.2.0"
   },
   "overrides": {
     "react": "18.2.0",
-    "react-native": "0.70.7"
+    "react-native": "0.72.7",
+    "react-dom": "18.2.0",
+    "@types/react": "18.2.0",
+    "@types/react-dom": "18.2.0"
   }
 }

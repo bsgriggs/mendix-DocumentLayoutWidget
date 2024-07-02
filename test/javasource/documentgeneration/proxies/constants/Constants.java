@@ -6,27 +6,14 @@ package documentgeneration.proxies.constants;
 
 import com.mendix.core.Core;
 
-public class Constants
+public final class Constants
 {
 	/**
-	 * @deprecated
-	 * The default constructor of the Constants class should not be used.
-	 * Use the static get methods instead.
+	 * Private constructor to prevent instantiation of this class. 
 	 */
-	@java.lang.Deprecated(since = "9.12", forRemoval = true)
-	public Constants() {}
+	private Constants() {}
 
 	// These are the constants for the DocumentGeneration module
-
-	/**
-	* URL of the DocGen Cloud Service API
-	* 
-	* Default: https://docgen.home.mendix.com/v1/generate-document
-	*/
-	public static java.lang.String getAPI_URL()
-	{
-		return (java.lang.String)Core.getConfiguration().getConstantValue("DocumentGeneration.API_URL");
-	}
 
 	/**
 	* Timeout in seconds for an asynchronous request; determines how long a document is allowed to be queued by the Cloud service
@@ -34,6 +21,11 @@ public class Constants
 	public static java.lang.Long getAsyncTimeoutInSeconds()
 	{
 		return (java.lang.Long)Core.getConfiguration().getConstantValue("DocumentGeneration.AsyncTimeoutInSeconds");
+	}
+
+	public static java.lang.String getCloudEndpoint()
+	{
+		return (java.lang.String)Core.getConfiguration().getConstantValue("DocumentGeneration.CloudEndpoint");
 	}
 
 	/**
@@ -44,9 +36,12 @@ public class Constants
 		return (java.lang.String)Core.getConfiguration().getConstantValue("DocumentGeneration.CustomChromePath");
 	}
 
-	public static boolean getEmulateCloudEnvironment()
+	/**
+	* Path to Node.js executable, for example: C:/Program Files/nodejs/node.exe
+	*/
+	public static java.lang.String getCustomNodePath()
 	{
-		return (java.lang.Boolean)Core.getConfiguration().getConstantValue("DocumentGeneration.EmulateCloudEnvironment");
+		return (java.lang.String)Core.getConfiguration().getConstantValue("DocumentGeneration.CustomNodePath");
 	}
 
 	/**
@@ -55,6 +50,14 @@ public class Constants
 	public static java.lang.Long getMaxHoursBeforeTokenRefresh()
 	{
 		return (java.lang.Long)Core.getConfiguration().getConstantValue("DocumentGeneration.MaxHoursBeforeTokenRefresh");
+	}
+
+	/**
+	* Overrides the service type to use. The applicable values are: Local, Cloud or empty (default). When empty, the module will determine the service type based on the operating system.
+	*/
+	public static java.lang.String getOverrideServiceType()
+	{
+		return (java.lang.String)Core.getConfiguration().getConstantValue("DocumentGeneration.OverrideServiceType");
 	}
 
 	/**
@@ -73,16 +76,6 @@ public class Constants
 	public static java.lang.Long getSyncTimeoutInSeconds()
 	{
 		return (java.lang.Long)Core.getConfiguration().getConstantValue("DocumentGeneration.SyncTimeoutInSeconds");
-	}
-
-	/**
-	* URL of the DocGen App Registration API
-	* 
-	* Default: https://docgen.home.mendix.com/auth/v1/token
-	*/
-	public static java.lang.String getTOKEN_URL()
-	{
-		return (java.lang.String)Core.getConfiguration().getConstantValue("DocumentGeneration.TOKEN_URL");
 	}
 
 	/**

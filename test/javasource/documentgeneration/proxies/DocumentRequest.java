@@ -4,7 +4,7 @@
 
 package documentgeneration.proxies;
 
-public class DocumentRequest
+public class DocumentRequest implements com.mendix.systemwideinterfaces.core.IEntityProxy
 {
 	private final com.mendix.systemwideinterfaces.core.IMendixObject documentRequestMendixObject;
 
@@ -21,12 +21,15 @@ public class DocumentRequest
 	public enum MemberNames
 	{
 		RequestId("RequestId"),
+		Status("Status"),
 		FileName("FileName"),
 		ResultEntity("ResultEntity"),
 		MicroflowName("MicroflowName"),
 		ContextObjectGuid("ContextObjectGuid"),
 		SecurityToken("SecurityToken"),
 		ExpirationDate("ExpirationDate"),
+		ErrorCode("ErrorCode"),
+		ErrorMessage("ErrorMessage"),
 		DocumentRequest_Session("DocumentGeneration.DocumentRequest_Session"),
 		DocumentRequest_FileDocument("DocumentGeneration.DocumentRequest_FileDocument"),
 		DocumentRequest_DocumentUser("DocumentGeneration.DocumentRequest_DocumentUser");
@@ -64,15 +67,6 @@ public class DocumentRequest
 	}
 
 	/**
-	 * @deprecated Use 'DocumentRequest.load(IContext, IMendixIdentifier)' instead.
-	 */
-	@java.lang.Deprecated
-	public static documentgeneration.proxies.DocumentRequest initialize(com.mendix.systemwideinterfaces.core.IContext context, com.mendix.systemwideinterfaces.core.IMendixIdentifier mendixIdentifier) throws com.mendix.core.CoreException
-	{
-		return documentgeneration.proxies.DocumentRequest.load(context, mendixIdentifier);
-	}
-
-	/**
 	 * Initialize a proxy using context (recommended). This context will be used for security checking when the get- and set-methods without context parameters are called.
 	 * The get- and set-methods with context parameter should be used when for instance sudo access is necessary (IContext.createSudoClone() can be used to obtain sudo access).
 	 * @param context The context to be used
@@ -99,39 +93,6 @@ public class DocumentRequest
 			.collect(java.util.stream.Collectors.toList());
 	}
 
-	/**
-	 * Commit the changes made on this proxy object.
-	 * @throws com.mendix.core.CoreException
-	 */
-	public final void commit() throws com.mendix.core.CoreException
-	{
-		com.mendix.core.Core.commit(context, getMendixObject());
-	}
-
-	/**
-	 * Commit the changes made on this proxy object using the specified context.
-	 * @throws com.mendix.core.CoreException
-	 */
-	public final void commit(com.mendix.systemwideinterfaces.core.IContext context) throws com.mendix.core.CoreException
-	{
-		com.mendix.core.Core.commit(context, getMendixObject());
-	}
-
-	/**
-	 * Delete the object.
-	 */
-	public final void delete()
-	{
-		com.mendix.core.Core.delete(context, getMendixObject());
-	}
-
-	/**
-	 * Delete the object using the specified context.
-	 */
-	public final void delete(com.mendix.systemwideinterfaces.core.IContext context)
-	{
-		com.mendix.core.Core.delete(context, getMendixObject());
-	}
 	/**
 	 * @return value of RequestId
 	 */
@@ -166,6 +127,51 @@ public class DocumentRequest
 	public final void setRequestId(com.mendix.systemwideinterfaces.core.IContext context, java.lang.String requestid)
 	{
 		getMendixObject().setValue(context, MemberNames.RequestId.toString(), requestid);
+	}
+
+	/**
+	 * Get value of Status
+	 * @param status
+	 */
+	public final documentgeneration.proxies.Enum_DocumentRequest_Status getStatus()
+	{
+		return getStatus(getContext());
+	}
+
+	/**
+	 * @param context
+	 * @return value of Status
+	 */
+	public final documentgeneration.proxies.Enum_DocumentRequest_Status getStatus(com.mendix.systemwideinterfaces.core.IContext context)
+	{
+		Object obj = getMendixObject().getValue(context, MemberNames.Status.toString());
+		if (obj == null) {
+			return null;
+		}
+		return documentgeneration.proxies.Enum_DocumentRequest_Status.valueOf((java.lang.String) obj);
+	}
+
+	/**
+	 * Set value of Status
+	 * @param status
+	 */
+	public final void setStatus(documentgeneration.proxies.Enum_DocumentRequest_Status status)
+	{
+		setStatus(getContext(), status);
+	}
+
+	/**
+	 * Set value of Status
+	 * @param context
+	 * @param status
+	 */
+	public final void setStatus(com.mendix.systemwideinterfaces.core.IContext context, documentgeneration.proxies.Enum_DocumentRequest_Status status)
+	{
+		if (status != null) {
+			getMendixObject().setValue(context, MemberNames.Status.toString(), status.toString());
+		} else {
+			getMendixObject().setValue(context, MemberNames.Status.toString(), null);
+		}
 	}
 
 	/**
@@ -368,6 +374,78 @@ public class DocumentRequest
 	}
 
 	/**
+	 * @return value of ErrorCode
+	 */
+	public final java.lang.String getErrorCode()
+	{
+		return getErrorCode(getContext());
+	}
+
+	/**
+	 * @param context
+	 * @return value of ErrorCode
+	 */
+	public final java.lang.String getErrorCode(com.mendix.systemwideinterfaces.core.IContext context)
+	{
+		return (java.lang.String) getMendixObject().getValue(context, MemberNames.ErrorCode.toString());
+	}
+
+	/**
+	 * Set value of ErrorCode
+	 * @param errorcode
+	 */
+	public final void setErrorCode(java.lang.String errorcode)
+	{
+		setErrorCode(getContext(), errorcode);
+	}
+
+	/**
+	 * Set value of ErrorCode
+	 * @param context
+	 * @param errorcode
+	 */
+	public final void setErrorCode(com.mendix.systemwideinterfaces.core.IContext context, java.lang.String errorcode)
+	{
+		getMendixObject().setValue(context, MemberNames.ErrorCode.toString(), errorcode);
+	}
+
+	/**
+	 * @return value of ErrorMessage
+	 */
+	public final java.lang.String getErrorMessage()
+	{
+		return getErrorMessage(getContext());
+	}
+
+	/**
+	 * @param context
+	 * @return value of ErrorMessage
+	 */
+	public final java.lang.String getErrorMessage(com.mendix.systemwideinterfaces.core.IContext context)
+	{
+		return (java.lang.String) getMendixObject().getValue(context, MemberNames.ErrorMessage.toString());
+	}
+
+	/**
+	 * Set value of ErrorMessage
+	 * @param errormessage
+	 */
+	public final void setErrorMessage(java.lang.String errormessage)
+	{
+		setErrorMessage(getContext(), errormessage);
+	}
+
+	/**
+	 * Set value of ErrorMessage
+	 * @param context
+	 * @param errormessage
+	 */
+	public final void setErrorMessage(com.mendix.systemwideinterfaces.core.IContext context, java.lang.String errormessage)
+	{
+		getMendixObject().setValue(context, MemberNames.ErrorMessage.toString(), errormessage);
+	}
+
+	/**
 	 * @throws com.mendix.core.CoreException
 	 * @return value of DocumentRequest_Session
 	 */
@@ -508,17 +586,13 @@ public class DocumentRequest
 		}
 	}
 
-	/**
-	 * @return the IMendixObject instance of this proxy for use in the Core interface.
-	 */
+	@java.lang.Override
 	public final com.mendix.systemwideinterfaces.core.IMendixObject getMendixObject()
 	{
 		return documentRequestMendixObject;
 	}
 
-	/**
-	 * @return the IContext instance of this proxy, or null if no IContext instance was specified at initialization.
-	 */
+	@java.lang.Override
 	public final com.mendix.systemwideinterfaces.core.IContext getContext()
 	{
 		return context;
@@ -544,21 +618,13 @@ public class DocumentRequest
 		return getMendixObject().hashCode();
 	}
 
-	/**
-	 * @return String name of this class
-	 */
+  /**
+   * Gives full name ("Module.Entity" name) of the type of the entity.
+   *
+   * @return the name
+   */
 	public static java.lang.String getType()
 	{
 		return entityName;
-	}
-
-	/**
-	 * @return String GUID from this object, format: ID_0000000000
-	 * @deprecated Use getMendixObject().getId().toLong() to get a unique identifier for this object.
-	 */
-	@java.lang.Deprecated
-	public java.lang.String getGUID()
-	{
-		return "ID_" + getMendixObject().getId().toLong();
 	}
 }

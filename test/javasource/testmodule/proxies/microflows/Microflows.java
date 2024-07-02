@@ -4,43 +4,102 @@
 
 package testmodule.proxies.microflows;
 
-import java.util.HashMap;
-import java.util.Map;
 import com.mendix.core.Core;
 import com.mendix.systemwideinterfaces.core.IContext;
 
-public class Microflows
+public final class Microflows
 {
 	/**
-	 * @deprecated
-	 * The default constructor of the Microflows class should not be used.
-	 * Use the static microflow invocation methods instead.
+	 * Private constructor to prevent instantiation of this class. 
 	 */
-	@java.lang.Deprecated(since = "9.12", forRemoval = true)
-	public Microflows() {}
+	private Microflows() {}
 
 	// These are the microflows for the TestModule module
-	public static void aCT_TestContext_GeneratePDF(IContext context, testmodule.proxies.TestContext _testContext)
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder aCT_TestContext_GeneratePDFBuilder(
+		testmodule.proxies.TestContext _testContext
+	)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		params.put("TestContext", _testContext == null ? null : _testContext.getMendixObject());
-		Core.microflowCall("TestModule.ACT_TestContext_GeneratePDF").withParams(params).execute(context);
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("TestModule.ACT_TestContext_GeneratePDF");
+		builder = builder.withParam("TestContext", _testContext);
+		return builder;
 	}
-	public static void aCT_TestContext_SaveNew(IContext context, testmodule.proxies.TestContext _testContext)
+
+	public static void aCT_TestContext_GeneratePDF(
+		IContext context,
+		testmodule.proxies.TestContext _testContext
+	)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		params.put("TestContext", _testContext == null ? null : _testContext.getMendixObject());
-		Core.microflowCall("TestModule.ACT_TestContext_SaveNew").withParams(params).execute(context);
+		aCT_TestContext_GeneratePDFBuilder(
+				_testContext
+			)
+			.execute(context);
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder aCT_TestContext_SaveNewBuilder(
+		testmodule.proxies.TestContext _testContext
+	)
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("TestModule.ACT_TestContext_SaveNew");
+		builder = builder.withParam("TestContext", _testContext);
+		return builder;
+	}
+
+	public static void aCT_TestContext_SaveNew(
+		IContext context,
+		testmodule.proxies.TestContext _testContext
+	)
+	{
+		aCT_TestContext_SaveNewBuilder(
+				_testContext
+			)
+			.execute(context);
+	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder aCT_TestPDF_DownloadBuilder(
+		testmodule.proxies.TestPDF _testPDF
+	)
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("TestModule.ACT_TestPDF_Download");
+		builder = builder.withParam("TestPDF", _testPDF);
+		return builder;
+	}
+
+	public static void aCT_TestPDF_Download(
+		IContext context,
+		testmodule.proxies.TestPDF _testPDF
+	)
+	{
+		aCT_TestPDF_DownloadBuilder(
+				_testPDF
+			)
+			.execute(context);
+	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder aSu_SystemBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("TestModule.ASu_System");
+		return builder;
+	}
+
 	public static boolean aSu_System(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		return (java.lang.Boolean) Core.microflowCall("TestModule.ASu_System").withParams(params).execute(context);
+		Object result = aSu_SystemBuilder().execute(context);
+		return (boolean) result;
 	}
-	public static void dOC_OpenDocumentGenerationPage(IContext context, testmodule.proxies.TestContext _testContext)
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder dOC_OpenDocumentGenerationPageBuilder(
+		testmodule.proxies.TestContext _testContext
+	)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		params.put("TestContext", _testContext == null ? null : _testContext.getMendixObject());
-		Core.microflowCall("TestModule.DOC_OpenDocumentGenerationPage").withParams(params).execute(context);
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("TestModule.DOC_OpenDocumentGenerationPage");
+		builder = builder.withParam("TestContext", _testContext);
+		return builder;
+	}
+
+	public static void dOC_OpenDocumentGenerationPage(
+		IContext context,
+		testmodule.proxies.TestContext _testContext
+	)
+	{
+		dOC_OpenDocumentGenerationPageBuilder(
+				_testContext
+			)
+			.execute(context);
 	}
 }

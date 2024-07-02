@@ -4,7 +4,7 @@
 
 package documentgeneration.proxies;
 
-public class RegistrationWizard
+public class RegistrationWizard implements com.mendix.systemwideinterfaces.core.IEntityProxy
 {
 	private final com.mendix.systemwideinterfaces.core.IMendixObject registrationWizardMendixObject;
 
@@ -20,8 +20,8 @@ public class RegistrationWizard
 	 */
 	public enum MemberNames
 	{
-		Email("Email"),
-		ApiKey("ApiKey"),
+		DeploymentType("DeploymentType"),
+		PersonalAccessToken("PersonalAccessToken"),
 		AppId("AppId"),
 		ApplicationUrl("ApplicationUrl"),
 		RegistrationWizard_Configuration("DocumentGeneration.RegistrationWizard_Configuration");
@@ -59,15 +59,6 @@ public class RegistrationWizard
 	}
 
 	/**
-	 * @deprecated Use 'RegistrationWizard.load(IContext, IMendixIdentifier)' instead.
-	 */
-	@java.lang.Deprecated
-	public static documentgeneration.proxies.RegistrationWizard initialize(com.mendix.systemwideinterfaces.core.IContext context, com.mendix.systemwideinterfaces.core.IMendixIdentifier mendixIdentifier) throws com.mendix.core.CoreException
-	{
-		return documentgeneration.proxies.RegistrationWizard.load(context, mendixIdentifier);
-	}
-
-	/**
 	 * Initialize a proxy using context (recommended). This context will be used for security checking when the get- and set-methods without context parameters are called.
 	 * The get- and set-methods with context parameter should be used when for instance sudo access is necessary (IContext.createSudoClone() can be used to obtain sudo access).
 	 * @param context The context to be used
@@ -86,108 +77,84 @@ public class RegistrationWizard
 	}
 
 	/**
-	 * Commit the changes made on this proxy object.
-	 * @throws com.mendix.core.CoreException
+	 * Get value of DeploymentType
+	 * @param deploymenttype
 	 */
-	public final void commit() throws com.mendix.core.CoreException
+	public final documentgeneration.proxies.Enum_DeploymentType getDeploymentType()
 	{
-		com.mendix.core.Core.commit(context, getMendixObject());
-	}
-
-	/**
-	 * Commit the changes made on this proxy object using the specified context.
-	 * @throws com.mendix.core.CoreException
-	 */
-	public final void commit(com.mendix.systemwideinterfaces.core.IContext context) throws com.mendix.core.CoreException
-	{
-		com.mendix.core.Core.commit(context, getMendixObject());
-	}
-
-	/**
-	 * Delete the object.
-	 */
-	public final void delete()
-	{
-		com.mendix.core.Core.delete(context, getMendixObject());
-	}
-
-	/**
-	 * Delete the object using the specified context.
-	 */
-	public final void delete(com.mendix.systemwideinterfaces.core.IContext context)
-	{
-		com.mendix.core.Core.delete(context, getMendixObject());
-	}
-	/**
-	 * @return value of Email
-	 */
-	public final java.lang.String getEmail()
-	{
-		return getEmail(getContext());
+		return getDeploymentType(getContext());
 	}
 
 	/**
 	 * @param context
-	 * @return value of Email
+	 * @return value of DeploymentType
 	 */
-	public final java.lang.String getEmail(com.mendix.systemwideinterfaces.core.IContext context)
+	public final documentgeneration.proxies.Enum_DeploymentType getDeploymentType(com.mendix.systemwideinterfaces.core.IContext context)
 	{
-		return (java.lang.String) getMendixObject().getValue(context, MemberNames.Email.toString());
+		Object obj = getMendixObject().getValue(context, MemberNames.DeploymentType.toString());
+		if (obj == null) {
+			return null;
+		}
+		return documentgeneration.proxies.Enum_DeploymentType.valueOf((java.lang.String) obj);
 	}
 
 	/**
-	 * Set value of Email
-	 * @param email
+	 * Set value of DeploymentType
+	 * @param deploymenttype
 	 */
-	public final void setEmail(java.lang.String email)
+	public final void setDeploymentType(documentgeneration.proxies.Enum_DeploymentType deploymenttype)
 	{
-		setEmail(getContext(), email);
+		setDeploymentType(getContext(), deploymenttype);
 	}
 
 	/**
-	 * Set value of Email
+	 * Set value of DeploymentType
 	 * @param context
-	 * @param email
+	 * @param deploymenttype
 	 */
-	public final void setEmail(com.mendix.systemwideinterfaces.core.IContext context, java.lang.String email)
+	public final void setDeploymentType(com.mendix.systemwideinterfaces.core.IContext context, documentgeneration.proxies.Enum_DeploymentType deploymenttype)
 	{
-		getMendixObject().setValue(context, MemberNames.Email.toString(), email);
+		if (deploymenttype != null) {
+			getMendixObject().setValue(context, MemberNames.DeploymentType.toString(), deploymenttype.toString());
+		} else {
+			getMendixObject().setValue(context, MemberNames.DeploymentType.toString(), null);
+		}
 	}
 
 	/**
-	 * @return value of ApiKey
+	 * @return value of PersonalAccessToken
 	 */
-	public final java.lang.String getApiKey()
+	public final java.lang.String getPersonalAccessToken()
 	{
-		return getApiKey(getContext());
+		return getPersonalAccessToken(getContext());
 	}
 
 	/**
 	 * @param context
-	 * @return value of ApiKey
+	 * @return value of PersonalAccessToken
 	 */
-	public final java.lang.String getApiKey(com.mendix.systemwideinterfaces.core.IContext context)
+	public final java.lang.String getPersonalAccessToken(com.mendix.systemwideinterfaces.core.IContext context)
 	{
-		return (java.lang.String) getMendixObject().getValue(context, MemberNames.ApiKey.toString());
+		return (java.lang.String) getMendixObject().getValue(context, MemberNames.PersonalAccessToken.toString());
 	}
 
 	/**
-	 * Set value of ApiKey
-	 * @param apikey
+	 * Set value of PersonalAccessToken
+	 * @param personalaccesstoken
 	 */
-	public final void setApiKey(java.lang.String apikey)
+	public final void setPersonalAccessToken(java.lang.String personalaccesstoken)
 	{
-		setApiKey(getContext(), apikey);
+		setPersonalAccessToken(getContext(), personalaccesstoken);
 	}
 
 	/**
-	 * Set value of ApiKey
+	 * Set value of PersonalAccessToken
 	 * @param context
-	 * @param apikey
+	 * @param personalaccesstoken
 	 */
-	public final void setApiKey(com.mendix.systemwideinterfaces.core.IContext context, java.lang.String apikey)
+	public final void setPersonalAccessToken(com.mendix.systemwideinterfaces.core.IContext context, java.lang.String personalaccesstoken)
 	{
-		getMendixObject().setValue(context, MemberNames.ApiKey.toString(), apikey);
+		getMendixObject().setValue(context, MemberNames.PersonalAccessToken.toString(), personalaccesstoken);
 	}
 
 	/**
@@ -309,17 +276,13 @@ public class RegistrationWizard
 		}
 	}
 
-	/**
-	 * @return the IMendixObject instance of this proxy for use in the Core interface.
-	 */
+	@java.lang.Override
 	public final com.mendix.systemwideinterfaces.core.IMendixObject getMendixObject()
 	{
 		return registrationWizardMendixObject;
 	}
 
-	/**
-	 * @return the IContext instance of this proxy, or null if no IContext instance was specified at initialization.
-	 */
+	@java.lang.Override
 	public final com.mendix.systemwideinterfaces.core.IContext getContext()
 	{
 		return context;
@@ -345,21 +308,13 @@ public class RegistrationWizard
 		return getMendixObject().hashCode();
 	}
 
-	/**
-	 * @return String name of this class
-	 */
+  /**
+   * Gives full name ("Module.Entity" name) of the type of the entity.
+   *
+   * @return the name
+   */
 	public static java.lang.String getType()
 	{
 		return entityName;
-	}
-
-	/**
-	 * @return String GUID from this object, format: ID_0000000000
-	 * @deprecated Use getMendixObject().getId().toLong() to get a unique identifier for this object.
-	 */
-	@java.lang.Deprecated
-	public java.lang.String getGUID()
-	{
-		return "ID_" + getMendixObject().getId().toLong();
 	}
 }
