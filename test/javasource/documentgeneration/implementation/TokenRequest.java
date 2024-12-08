@@ -2,11 +2,10 @@ package documentgeneration.implementation;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
-
-import org.apache.commons.io.IOUtils;
 
 import com.mendix.core.Core;
 import com.mendix.http.HttpHeader;
@@ -57,17 +56,11 @@ public class TokenRequest {
 			throw new RuntimeException("Token response is not a valid JSON object");
 		}
 	}
-
-	public static JSONObject parseTokenResponse(IContext context, HttpResponse response) {
-		String rawResponse;
-
-		try {
-			rawResponse = IOUtils.toString(response.getContent(), StandardCharsets.UTF_8);
-		} catch (IOException e) {
-			throw new RuntimeException("Received invalid token response: " + e.getMessage());
+	
+	public static JSONObject parseTokenResponse(IContext context, HttpResponse response) throws IOException {
+		try (InputStream is = response.getContent()) {
+			String rawResponse = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+			return TokenRequest.parseTokenResponse(context, rawResponse);
 		}
-
-		return TokenRequest.parseTokenResponse(context, rawResponse);
-
 	}
 }

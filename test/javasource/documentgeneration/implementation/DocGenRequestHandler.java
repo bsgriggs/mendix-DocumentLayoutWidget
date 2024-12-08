@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 
 import com.mendix.core.Core;
 import com.mendix.core.CoreException;
-import com.mendix.core.conf.RuntimeVersion;
 import com.mendix.externalinterface.connector.RequestHandler;
 import com.mendix.logging.ILogNode;
 import com.mendix.m2ee.api.IMxRuntimeRequest;
@@ -107,7 +106,9 @@ public class DocGenRequestHandler extends RequestHandler {
 		addCookies(response, session);
 
 		response.getHttpServletResponse().sendRedirect(DocumentGenerator.getEnvironmentApplicationURL(systemContext)
-				+ "/p/generate-document/" + documentRequest.getMendixObject().getId().toLong() + "?profile=Responsive");
+	            + "/" + ConfigurationManager.getUrlPrefix() + "generate-document/"
+	            + documentRequest.getMendixObject().getId().toLong()
+	            + "?profile=Responsive");
 	}
 
 	private void processResult(IMxRuntimeRequest request, IMxRuntimeResponse response, ISession session,
@@ -163,7 +164,7 @@ public class DocGenRequestHandler extends RequestHandler {
 
 	private static void addCookies(IMxRuntimeResponse response, ISession session)
 			throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		String[] runtimeVersion = RuntimeVersion.getInstance().toString().split("\\.");
+		String[] runtimeVersion = Core.getRuntimeVersion().split("\\.");
 
 		if ((Integer.parseInt(runtimeVersion[0]) == 9 && Integer.parseInt(runtimeVersion[1]) >= 20)
 				|| Integer.parseInt(runtimeVersion[0]) >= 10) {

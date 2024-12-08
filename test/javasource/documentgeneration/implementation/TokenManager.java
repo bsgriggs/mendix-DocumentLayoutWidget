@@ -1,5 +1,6 @@
 package documentgeneration.implementation;
 
+import java.io.IOException;
 import java.util.Date;
 
 import org.apache.commons.lang3.time.DateUtils;
@@ -20,7 +21,7 @@ import documentgeneration.proxies.TokenResult;
 
 public class TokenManager {
 	public static IMendixObject requestAccessToken(IContext context, Enum_DeploymentType deploymentType, String appId,
-			String password, String applicationUrl) throws CoreException {
+			String password, String applicationUrl) throws CoreException, IOException {
 
 		if (deploymentType == null)
 			throw new RuntimeException("Invalid Deployment Type");
@@ -70,7 +71,7 @@ public class TokenManager {
 		return tokenResult.getMendixObject();
 	}
 
-	public static boolean refreshTokens(IContext context) throws CoreException, JSONException {
+	public static boolean refreshTokens(IContext context) throws CoreException, JSONException, IOException {
 		Configuration configuration = ConfigurationManager.getConfigurationObject(context);
 
 		if (!Enum_RegistrationStatus.Registered.equals(configuration.getRegistrationStatus()))

@@ -176,7 +176,7 @@ public class DocumentGenerator {
 		body.put("waitForIdleNetwork", WAIT_FOR_IDLE_NETWORK);
 		body.put("timeout", timeout);
 		body.put("moduleVersion", ConfigurationManager.MODULE_VERSION);
-		body.put("runtimeVersion", com.mendix.core.conf.Configuration.RUNTIME_VERSION);
+		body.put("runtimeVersion", Core.getRuntimeVersion());
 		body.put("projectId", Core.getProjectId());
 
 		String requestBody = body.toString();

@@ -1,9 +1,8 @@
 package documentgeneration.implementation;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-
-import org.apache.commons.io.IOUtils;
 
 import com.mendix.core.Core;
 import com.mendix.core.CoreException;
@@ -69,10 +68,10 @@ public class DocumentRequestErrorManager {
 	}
 
 	private static JSONObject parseRequestBody(IMxRuntimeRequest request) throws IOException, JSONException {
-		String result = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
-		logging.trace("Reading request body for error callback: " + result);
-
-		return new JSONObject(result);
+		try (InputStream is = request.getInputStream()) {
+			String rawResponse = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+			return new JSONObject(rawResponse);
+		}
 	}
 
 	private enum DocGenServiceErrorCodes {

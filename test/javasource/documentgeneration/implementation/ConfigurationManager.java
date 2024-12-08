@@ -1,5 +1,6 @@
 package documentgeneration.implementation;
 
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
@@ -91,8 +92,27 @@ public class ConfigurationManager {
 			throw new RuntimeException("Invalid generate endpoint: " + e.getMessage());
 		}
 	}
+	
+	public static String getUrlPrefix() {
+		String prefix = "p/";
+		String getUrlPrefixMethodName = "getUrlPrefix";
+		try {
+			Method webMethod = Core.class.getMethod("web");
+			Object webObj = webMethod.invoke(Core.class);
+			Method getUrlPrefix = webObj.getClass().getMethod(getUrlPrefixMethodName);
+			prefix = (String) getUrlPrefix.invoke(webObj);
+			
+			logging.trace(String.format("Using custom URL prefix '%s'", prefix));
+        } catch (NoSuchMethodException e) {
+			logging.trace(String.format("Custom URL prefix is not supported in this version of Mendix. Using default URL prefix '%s'", prefix));
+		} catch (Exception e) {
+			logging.warn(String.format("Failed to get method %s with an error. Using default prefix %s.\n%s", getUrlPrefixMethodName, prefix, e));
+		}
 
-	public static final String MODULE_VERSION = "1.9.0";
+		return prefix;
+	}
+
+	public static final String MODULE_VERSION = "1.10.0";
 	public static final String TOKEN_URL = documentgeneration.proxies.constants.Constants.getCloudEndpoint()
 			+ "/auth/v2/token";
 	public static final String GENERATE_URL = documentgeneration.proxies.constants.Constants.getCloudEndpoint()
