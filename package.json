@@ -1,7 +1,7 @@
 {
   "name": "documentlayoutwidget",
   "widgetName": "DocumentLayoutWidget",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Document layout widget",
   "copyright": "2023 Aiden",
   "author": "Marcel Groeneweg",
@@ -25,7 +25,7 @@
     "release": "pluggable-widgets-tools release:web"
   },
   "devDependencies": {
-    "@mendix/pluggable-widgets-tools": "^10.12.0"
+    "@mendix/pluggable-widgets-tools": "^10.18.0"
   },
   "dependencies": {},
   "resolutions": {
