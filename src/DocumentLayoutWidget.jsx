@@ -2,7 +2,7 @@ import "./ui/DocumentLayoutWidget.css";
 import { createElement } from "react";
 
 export function DocumentLayoutWidget(props) {
-    const { headerFooter, headerContent, bodyContent, footerContent, headerHeight, footerHeight } = props;
+    const { headerContent, bodyContent, footerContent, headerHeight, footerHeight } = props;
 
     const className = "document-layout-widget " + props.class;
 
@@ -27,7 +27,7 @@ export function DocumentLayoutWidget(props) {
     return (
         <div className={className}>
             <table className="layout-table">
-                {(headerFooter === "header" || headerFooter === "both") && (
+                {props.useHeader.value === true && (
                     <thead>
                         <tr>
                             <td>
@@ -45,7 +45,7 @@ export function DocumentLayoutWidget(props) {
                         </td>
                     </tr>
                 </tbody>
-                {(headerFooter === "footer" || headerFooter === "both") && (
+                {props.useFooter.value === true && (
                     <tfoot>
                         <tr>
                             <td>
@@ -57,12 +57,12 @@ export function DocumentLayoutWidget(props) {
                     </tfoot>
                 )}
             </table>
-            {(headerFooter === "header" || headerFooter === "both") && (
+            {props.useHeader.value === true && (
                 <div className="header" style={headerStyle}>
                     {headerContent}
                 </div>
             )}
-            {(headerFooter === "footer" || headerFooter === "both") && (
+            {props.useFooter.value === true && (
                 <div className="footer" style={footerStyle}>
                     {footerContent}
                 </div>

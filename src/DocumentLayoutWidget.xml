@@ -1,42 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<widget id="aiden.documentlayoutwidget.DocumentLayoutWidget" pluginWidget="true" needsEntityContext="true" offlineCapable="true"
-        supportedPlatform="Web"
-        xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
+<widget id="aiden.documentlayoutwidget.DocumentLayoutWidget" pluginWidget="true"
+    needsEntityContext="true" offlineCapable="true"
+    supportedPlatform="Web"
+    xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
     <name>Document Layout Widget</name>
     <description>Document layout widget</description>
     <studioProCategory>Document generation</studioProCategory>
     <properties>
         <propertyGroup caption="General">
-            <property key="headerFooter" type="enumeration" defaultValue="both">
-                <caption>Header/Footer</caption>
-                <description></description>
-                <enumerationValues>
-                    <enumerationValue key="both">Both</enumerationValue>
-                    <enumerationValue key="header">Header</enumerationValue>
-                    <enumerationValue key="footer">Footer</enumerationValue>
-                </enumerationValues>
-            </property>
-            <property key="headerContent" type="widgets" required="false">
-                <caption>Header content</caption>
-                <description></description>
-            </property>
-            <property key="bodyContent" type="widgets">
-                <caption>Body content</caption>
-                <description></description>
-            </property>
-            <property key="footerContent" type="widgets" required="false">
-                <caption>Footer content</caption>
-                <description></description>
-            </property>
-            <property key="headerHeight" type="integer" defaultValue="100">
-                <caption>Header height</caption>
-                <description></description>
-            </property>
-            <property key="footerHeight" type="integer" defaultValue="100">
-                <caption>Footer height</caption>
-                <description></description>
-            </property>
+            <propertyGroup caption="Header">
+                <property key="useHeader" type="expression" defaultValue="true">
+                    <caption>Use header</caption>
+                    <description></description>
+                    <returnType type="Boolean" />
+                </property>
+                <property key="headerContent" type="widgets" required="false">
+                    <caption>Header content</caption>
+                    <description></description>
+                </property>
+                <property key="headerHeight" type="integer" defaultValue="100">
+                    <caption>Header height</caption>
+                    <description></description>
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Body">
+                <property key="bodyContent" type="widgets" required="true">
+                    <caption>Body content</caption>
+                    <description></description>
+                </property>
+            </propertyGroup>
+            <propertyGroup caption="Footer">
+                <property key="useFooter" type="expression" defaultValue="true">
+                    <caption>Use footer</caption>
+                    <description></description>
+                    <returnType type="Boolean" />
+                </property>
+                <property key="footerContent" type="widgets" required="false">
+                    <caption>Footer content</caption>
+                    <description></description>
+                </property>
+                <property key="footerHeight" type="integer" defaultValue="100">
+                    <caption>Footer height</caption>
+                    <description></description>
+                </property>
+            </propertyGroup>
         </propertyGroup>
     </properties>
 </widget>

@@ -50,14 +50,6 @@ import { hidePropertyIn } from "@mendix/pluggable-widgets-tools";
  */
 export function getProperties(values, defaultProperties, target) {
     // Do the values manipulation here to control the visibility of properties in Studio and Studio Pro conditionally.
-    if (values.headerFooter === "header") {
-        hidePropertyIn(defaultProperties, values, "footerContent");
-        hidePropertyIn(defaultProperties, values, "footerHeight");
-    }
-    if (values.headerFooter === "footer") {
-        hidePropertyIn(defaultProperties, values, "headerContent");
-        hidePropertyIn(defaultProperties, values, "headerHeight");
-    }
     return defaultProperties;
 }
 
@@ -68,40 +60,6 @@ export function getProperties(values, defaultProperties, target) {
 export function check(values) {
     /** @type {Problem[]} */
     const errors = [];
-
-    const headerHeightValue = values.headerHeight ? Number(values.headerHeight) : 0;
-    if (values.headerFooter === "both" || values.headerFooter === "header") {
-        if (!values.headerHeight || headerHeightValue <= 0) {
-            errors.push({
-                property: "headerHeight",
-                message: "Header height must be set and positive"
-            });
-        }
-
-        if (!values.headerContent || values.headerContent.widgetCount === 0) {
-            errors.push({
-                property: "headerContent",
-                message: "Place content in the header dropzone"
-            });
-        }
-    }
-
-    const footerHeightValue = values.footerHeight ? Number(values.footerHeight) : 0;
-    if (values.headerFooter === "both" || values.headerFooter === "footer") {
-        if (!values.footerHeight || footerHeightValue <= 0) {
-            errors.push({
-                property: "footerHeight",
-                message: "Footer height must be set and positive"
-            });
-        }
-
-        if (!values.footerContent || values.footerContent.widgetCount === 0) {
-            errors.push({
-                property: "footerContent",
-                message: "Place content in the footer dropzone"
-            });
-        }
-    }
 
     return errors;
 }
