@@ -2,7 +2,7 @@ import "./ui/DocumentLayoutWidget.css";
 import { createElement } from "react";
 
 export function DocumentLayoutWidget(props) {
-    const { headerContent, bodyContent, footerContent, headerHeight, footerHeight } = props;
+    const { headerContent, bodyContent, footerContent } = props;
 
     const className = "document-layout-widget " + props.class;
 
@@ -17,11 +17,11 @@ export function DocumentLayoutWidget(props) {
 
     // The header/footer style only contains the height value.
     const headerStyle = {
-        height: headerHeight + "px"
+        height: props.headerHeight.value
     };
 
     const footerStyle = {
-        height: footerHeight + "px"
+        height: props.footerHeight.value
     };
 
     return (

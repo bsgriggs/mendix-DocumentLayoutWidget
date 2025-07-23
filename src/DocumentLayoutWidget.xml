@@ -19,9 +19,10 @@
                     <caption>Header content</caption>
                     <description></description>
                 </property>
-                <property key="headerHeight" type="integer" defaultValue="100">
+                <property key="headerHeight" type="expression" defaultValue="100px" required="true">
                     <caption>Header height</caption>
                     <description></description>
+                    <returnType type="String" />
                 </property>
             </propertyGroup>
             <propertyGroup caption="Body">
@@ -40,9 +41,10 @@
                     <caption>Footer content</caption>
                     <description></description>
                 </property>
-                <property key="footerHeight" type="integer" defaultValue="100">
+                <property key="footerHeight" type="expression" defaultValue="100px" required="true">
                     <caption>Footer height</caption>
                     <description></description>
+                    <returnType type="String" />
                 </property>
             </propertyGroup>
         </propertyGroup>

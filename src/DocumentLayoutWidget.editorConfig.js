@@ -1,5 +1,3 @@
-import { hidePropertyIn } from "@mendix/pluggable-widgets-tools";
-
 /**
  * @typedef Property
  * @type {object}
