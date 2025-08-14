@@ -58,12 +58,12 @@ export function DocumentLayoutWidget(props) {
                 )}
             </table>
             {props.useHeader.value === true && (
-                <div className="header" style={headerStyle}>
+                <div className="header-content" style={headerStyle}>
                     {headerContent}
                 </div>
             )}
             {props.useFooter.value === true && (
-                <div className="footer" style={footerStyle}>
+                <div className="footer-content" style={footerStyle}>
                     {footerContent}
                 </div>
             )}

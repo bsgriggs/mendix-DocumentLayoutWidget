@@ -1,4 +1,4 @@
-.document-layout-widget .header {
+.document-layout-widget .header-content {
     position: fixed;
     top: 0;
     width: 100%;
@@ -16,7 +16,7 @@
     break-inside: avoid;
 }
 
-.document-layout-widget .footer {
+.document-layout-widget .footer-content {
     position: fixed;
     bottom: 0;
     width: 100%;
